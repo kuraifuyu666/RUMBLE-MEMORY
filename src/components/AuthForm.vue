@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     submitForm() {
-      // Handle form submission
+      // Gére la soumission du formulaire
     },
   },
 };

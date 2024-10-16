@@ -27,7 +27,7 @@ export default {
     return {
       topPlayers: [
         { rank: 1, name: 'Player1', score: 2000 },
-        // ...more players
+        // ... autres joueurs
       ],
     };
   },

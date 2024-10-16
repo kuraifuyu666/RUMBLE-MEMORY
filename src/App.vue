@@ -4,11 +4,18 @@
     <header class="bg-gray-800 text-white py-4">
       <nav class="container mx-auto flex justify-center items-center">
         <div class="flex items-center space-x-8">
-          <!-- Logo centré avec effet de rebond -->
+          <!-- Logo centré -->
           <h1 class="text-2xl font-bold animate-bounce">Rumble Memory</h1>
           
           <!-- Liens centrés avec boutons -->
           <ul class="flex space-x-4">
+            <li>
+              <router-link to="/">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+                  Accueil
+                </button>
+              </router-link>
+            </li>
             <li>
               <router-link to="/game">
                 <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
@@ -39,7 +46,7 @@
             </li>
             <li>
               <router-link to="/help">
-                <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
+                <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
                   Help
                 </button>
               </router-link>
