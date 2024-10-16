@@ -29,6 +29,16 @@
 </template>
 
 <script>
+        // Chemins des images intégrées
+        import tarot1 from '@/assets/tarot1.jpg';
+        import tarot2 from '@/assets/tarot2.jpg';
+        import tarot3 from '@/assets/tarot3.jpg';
+        import tarot4 from '@/assets/tarot4.jpg';
+        import tarot5 from '@/assets/tarot5.jpg';
+        import tarot6 from '@/assets/tarot6.jpg';
+        import tarot7 from '@/assets/tarot7.jpg';
+        import tarot8 from '@/assets/tarot8.jpg';
+
 export default {
   data() {
     return {
@@ -36,17 +46,7 @@ export default {
       cards: [], // Tableau pour les cartes du jeu
       flippedCards: [], // Cartes retournées
       matchedPairs: [], // Paires correspondantes
-      images: [
-        // Chemins des images intégrées
-        require('@/assets/tarot1.jpg'),
-        require('@/assets/tarot2.jpg'),
-        require('@/assets/tarot3.jpg'),
-        require('@/assets/tarot4.jpg'),
-        require('@/assets/tarot5.jpg'),
-        require('@/assets/tarot6.jpg'),
-        require('@/assets/tarot7.jpg'),
-        require('@/assets/tarot8.jpg'),
-      ],
+      images: [tarot1, tarot2, tarot3, tarot4, tarot5, tarot6, tarot7, tarot8], // Utilise import pour les images
     };
   },
   mounted() {
@@ -132,8 +132,8 @@ export default {
 }
 .card {
   transition: transform 0.2s;
-  width: 100px;
-  height: 150px; /* Ajuster la taille pour les cartes de tarot */
+  width: 160px;
+  height: 280px; /* Ajuster la taille pour les cartes de tarot */
 }
 .card:hover {
   transform: scale(1.05);
