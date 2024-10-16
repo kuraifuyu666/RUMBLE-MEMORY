@@ -6,8 +6,8 @@
       Cliquez sur une carte pour la retourner et essayez de trouver les paires!
     </p>
   </div>
-    <!-- Section de Chat -->
-    <div class="chat-container mt-6">
+    <!-- Section de Chat à droite -->
+    <div class="chat-container w-1/3">
       <h2 class="text-2xl font-bold mb-2">Chat</h2>
       <div class="chat-box border border-gray-300 rounded-lg shadow-md p-4 max-h-60 overflow-y-auto">
         <div v-for="(msg, index) in messages" :key="index" class="chat-message mb-2">
@@ -51,16 +51,10 @@ export default {
 .home-container {
   background-color: #f9f9f9;
 }
-
-.chat-container {
-  max-width: 600px;
-  margin: auto;
-}
 .chat-box {
   max-height: 200px; /* Limiter la hauteur de la boîte de chat */
 }
 .chat-message {
   padding: 2px 0;
 }
-
 </style>

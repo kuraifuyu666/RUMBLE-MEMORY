@@ -2,7 +2,8 @@
   <div id="app" class="min-h-screen bg-gray-100">
     <!-- Navbar centrée -->
     <header class="bg-gray-800 text-white py-4">
-      <nav class="container mx-auto flex justify-center items-center">
+      <nav class="container mx-auto flex justify-between items-center">
+        <!-- Section de gauche avec les liens centrés -->
         <div class="flex items-center space-x-8">
           <!-- Logo centré -->
           <h1 class="text-2xl font-bold animate-bounce">Rumble Memory</h1>
@@ -31,34 +32,34 @@
               </router-link>
             </li>
             <li>
-              <router-link to="/login">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
-                  Connexion
-                </button>
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/signup">
-                <button class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
-                  Inscription
-                </button>
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/help">
-                <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
+              <a href="https://youtu.be/dQw4w9WgXcQ?si=kFB5mui2EZx39Rpn" target="_blank" rel="noopener noreferrer">
+                <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
                   Help
                 </button>
-              </router-link>
+              </a>
             </li>
           </ul>
+        </div>
+
+        <!-- Section à droite avec Connexion et Inscription -->
+        <div class="flex items-center space-x-4">
+          <router-link to="/login">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+              Connexion
+            </button>
+          </router-link>
+          <router-link to="/signup">
+            <button class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+              Inscription
+            </button>
+          </router-link>
         </div>
       </nav>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto py-6">
-      <router-view></router-view> 
+      <router-view></router-view> <!-- This is where the components will be rendered -->
     </main>
   </div>
 </template>
@@ -68,6 +69,7 @@ export default {
   name: 'App',
 };
 </script>
+
 
 <style>
 /* Animation de rebond */
