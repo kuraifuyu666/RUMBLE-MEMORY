@@ -1,79 +1,82 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-
-</script>
-
 <template>
-  <header>
-      <nav>
-        
-        
+  <div id="app" class="min-h-screen bg-gray-100">
+    <!-- Navbar centrée -->
+    <header class="bg-gray-800 text-white py-4">
+      <nav class="container mx-auto flex justify-center items-center">
+        <div class="flex items-center space-x-8">
+          <!-- Logo centré avec effet de rebond -->
+          <h1 class="text-2xl font-bold animate-bounce">Rumble Memory</h1>
+          
+          <!-- Liens centrés avec boutons -->
+          <ul class="flex space-x-4">
+            <li>
+              <router-link to="/game">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+                  Game
+                </button>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/leaderboard">
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 hover:shadow-lg transition-all">
+                  Classement
+                </button>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/login">
+                <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+                  Connexion
+                </button>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/signup">
+                <button class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+                  Inscription
+                </button>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/help">
+                <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
+                  Help
+                </button>
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </nav>
-  </header>
+    </header>
 
-  <RouterView />
+    <!-- Main Content -->
+    <main class="container mx-auto py-6">
+      <router-view></router-view> 
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script>
+export default {
+  name: 'App',
+};
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+<style>
+/* Animation de rebond */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
+  40% {
+    transform: translateY(-10px);
   }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+  60% {
+    transform: translateY(-5px);
   }
+}
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.animate-bounce {
+  animation: bounce 1s ease infinite;
 }
 </style>
