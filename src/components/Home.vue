@@ -6,7 +6,8 @@
       Cliquez sur une carte pour la retourner et essayez de trouver les paires!
     </p>
   </div>
-    <!-- Section de Chat à droite -->
+
+    <!-- Section de Chat à gauche -->
     <div class="chat-container fixed bottom-4 left-4 border border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
       <h2 class="text-2xl font-bold mb-2 text-white">Chat</h2>
       <div class="chat-box border border-gray-300 rounded-lg shadow-md p-4 max-h-60 overflow-y-auto">
@@ -25,10 +26,26 @@
         Envoyer
       </button>
     </div>
+    
+        <!-- Conteneur pour le MusicPlayer, positionné en bas -->
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-md">
+      <MusicPlayer />
+    </div>
+
+    <!-- Affichage du Leaderboard à droite -->
+    <div class="leaderboard-container fixed bottom-4 right-4 border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
+      <Leaderboard />
+    </div>
 </template>
 
 <script>
+import Leaderboard from '@/components/Leaderboard.vue';
+import MusicPlayer from '@/components/MusicPlayer.vue';
 export default {
+  components: {
+    Leaderboard, // Enregistrer le composant Leaderboard pour l'utiliser dans Home.vue
+    MusicPlayer, // Enregistrer le composant MusicPlayer pour l'utiliser dans Home.vue
+  },
   name: 'Home',
   data() {
     return {

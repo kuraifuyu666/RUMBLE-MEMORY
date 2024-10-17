@@ -6,7 +6,7 @@
         <!-- Section de gauche avec les liens centrés -->
         <div class="flex items-center space-x-8">
           <!-- Logo centré -->
-          <h1 class="text-2xl font-bold animate-bounce">Rumble Memory</h1>
+          <h1 class=" luckiest-guy-regular text-2xl font-bold animate-bounce">Rumble Memory</h1>
           
           <!-- Liens centrés avec boutons -->
           <ul class="flex space-x-4">
@@ -19,7 +19,7 @@
             </li>
             <li>
               <router-link to="/game">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+                <button class="bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 hover:shadow-lg transition-all">
                   Game
                 </button>
               </router-link>
@@ -49,7 +49,7 @@
             </button>
           </router-link>
           <router-link to="/signup">
-            <button class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+            <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
               Inscription
             </button>
           </router-link>
@@ -66,12 +66,22 @@
 
 <script>
 export default {
+
   name: 'App',
 };
 </script>
 
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+.luckiest-guy-regular {
+  font-family: "Luckiest Guy", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
 /* Animation de rebond */
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {

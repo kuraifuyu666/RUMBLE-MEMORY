@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white shadow-md rounded p-6">
-    <h2 class="text-xl font-bold mb-4">Top 10 Players</h2>
+    <h2 class="text-xl font-bold mb-4">Classement</h2>
     <table class="min-w-full table-auto">
       <thead>
         <tr class="bg-gray-200">

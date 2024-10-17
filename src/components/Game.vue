@@ -63,6 +63,7 @@
         import tarot7 from '@/assets/tarot7.jpg';
         import tarot8 from '@/assets/tarot8.jpg';
         import cardBack from '@/assets/card-back.jpg';
+        
 export default {
   data() {
     return {
