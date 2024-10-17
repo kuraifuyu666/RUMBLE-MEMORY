@@ -7,10 +7,10 @@
     </p>
   </div>
     <!-- Section de Chat à droite -->
-    <div class="chat-container w-1/3">
-      <h2 class="text-2xl font-bold mb-2">Chat</h2>
+    <div class="chat-container fixed bottom-4 left-4 border border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
+      <h2 class="text-2xl font-bold mb-2 text-white">Chat</h2>
       <div class="chat-box border border-gray-300 rounded-lg shadow-md p-4 max-h-60 overflow-y-auto">
-        <div v-for="(msg, index) in messages" :key="index" class="chat-message mb-2">
+        <div v-for="(msg, index) in messages" :key="index" class="chat-message mb-2 text-gray-300">
           <strong>User:</strong> {{ msg }}
         </div>
       </div>
@@ -19,7 +19,7 @@
         @keyup.enter="sendMessage"
         type="text"
         placeholder="Écrivez un message..."
-        class="mt-2 w-full p-2 border border-gray-300 rounded"
+        class="border border-gray-500 bg-gray-700 text-white rounded-lg p-2 w-full"
       />
       <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded">
         Envoyer
@@ -51,8 +51,14 @@ export default {
 .home-container {
   background-color: #f9f9f9;
 }
+.chat-container {
+  transition: border-color 0.2s;
+}
+.chat-container:hover {
+  border-color: #a1a1a1; /* Couleur de bordure au survol */
+}
 .chat-box {
-  max-height: 200px; /* Limiter la hauteur de la boîte de chat */
+  max-height: 100px; /* Limiter la hauteur de la boîte de chat */
 }
 .chat-message {
   padding: 2px 0;
