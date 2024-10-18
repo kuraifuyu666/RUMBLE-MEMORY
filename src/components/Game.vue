@@ -2,6 +2,15 @@
   <div class="game-container p-6 flex flex-col items-center bg-gray-900 text-white min-h-screen">
     <h2 class="text-3xl font-bold mb-4 text-gray-100">Jeu de Rumble Memory</h2>
 
+        <!-- Bouton de redémarrage -->
+    <button 
+      v-if="matchedPairs.length === cards.length / 2" 
+      @click="initializeGame" 
+      class="mt-4 bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 transition-all"
+    >
+      Rejouer
+    </button>
+
     <!-- Conteneur pour le compteur d'erreurs, la sélection de difficulté et le timer alignés côte à côte -->
     <div class="flex items-center space-x-8 mb-4">
       <!-- Affichage du compteur d'erreurs -->
@@ -40,30 +49,28 @@
         class="card bg-gray-700 rounded-lg shadow-xl p-4 flex items-center justify-center cursor-pointer hover:bg-gray-600"
         @click="flipCard(index)"
       >
-
-      <!-- Affiche l'image du dos de la carte si elle n'est pas retournée -->
+        <!-- Affiche l'image du dos de la carte si elle n'est pas retournée -->
         <img v-if="!card.flipped" src="@/assets/card-back.jpg" alt="Card Back" class="w-full h-full object-cover rounded-lg">
         
-      <!-- Affiche l'image si la carte est retournée -->
+        <!-- Affiche l'image si la carte est retournée -->
         <img v-else :src="card.image" alt="card image" class="w-full h-full object-cover rounded-lg">
-      
       </div>
     </div>
   </div>
 </template>
 
 <script>
-        // Chemins des images intégrées
-        import tarot1 from '@/assets/tarot1.jpg';
-        import tarot2 from '@/assets/tarot2.jpg';
-        import tarot3 from '@/assets/tarot3.jpg';
-        import tarot4 from '@/assets/tarot4.jpg';
-        import tarot5 from '@/assets/tarot5.jpg';
-        import tarot6 from '@/assets/tarot6.jpg';
-        import tarot7 from '@/assets/tarot7.jpg';
-        import tarot8 from '@/assets/tarot8.jpg';
-        import cardBack from '@/assets/card-back.jpg';
-        
+// Chemins des images intégrées
+import tarot1 from '@/assets/tarot1.jpg';
+import tarot2 from '@/assets/tarot2.jpg';
+import tarot3 from '@/assets/tarot3.jpg';
+import tarot4 from '@/assets/tarot4.jpg';
+import tarot5 from '@/assets/tarot5.jpg';
+import tarot6 from '@/assets/tarot6.jpg';
+import tarot7 from '@/assets/tarot7.jpg';
+import tarot8 from '@/assets/tarot8.jpg';
+import cardBack from '@/assets/card-back.jpg';
+
 export default {
   data() {
     return {
@@ -127,9 +134,9 @@ export default {
     flipCard(index) {
       const card = this.cards[index];
 
-    // Démarrer le timer si c'est la première carte retournée
-    if (!this.timerStarted) {
-      this.startTimer();
+      // Démarrer le timer si c'est la première carte retournée
+      if (!this.timerStarted) {
+        this.startTimer();
       }
 
       // Ignorer si la carte est déjà retournée ou si deux cartes sont déjà retournées
