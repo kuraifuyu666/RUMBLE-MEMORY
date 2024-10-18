@@ -18,6 +18,12 @@ class MusicService {
     this.audio.volume = this.volume;
     this.audio.play();
     this.isPlaying = true;
+
+    // Ajout d'un écouteur pour changer de piste à la fin
+    this.audio.onended = () => {
+      this.nextTrack();
+  };
+
   }
 
   pause() {
@@ -45,8 +51,13 @@ class MusicService {
   }
 
   nextTrack() {
-    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
-    this.changeTrack(this.currentTrackIndex);
+    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length; // Passe à la piste suivante
+    this.changeTrack(this.currentTrackIndex); // Change de piste
+    this.play(); // Joue la nouvelle piste
+  }
+  
+  setAudioVolume() {
+    this.adjustVolume(); // Définit le volume lors du chargement de la piste
   }
 }
 

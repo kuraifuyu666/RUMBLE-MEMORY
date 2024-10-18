@@ -18,17 +18,18 @@
 
     <!-- Sélection de piste -->
     <div class="track-selector mt-4">
-      <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
+    <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
       <select id="track-select" v-model="selectedTrack" @change="changeTrack" class="bg-gray-700 p-2 rounded-lg w-full">
-        <option v-for="(track, index) in tracks" :key="index" :value="index">
-          {{ track.title }} - {{ track.artist }}
-        </option>
+    <option v-for="(track, index) in tracks" :key="index" :value="index">
+      {{ track.title }} - {{ track.artist }} 
+      <span v-if="index === (selectedTrack + 1) % tracks.length"></span>
+    </option>
       </select>
     </div>
   </div>
 
   <!-- Audio (toujours monté, même si les contrôles sont cachés) -->
-  <audio ref="audio" :src="currentTrack ? currentTrack.url : ''" @timeupdate="updateTime" @ended="nextTrack"></audio>
+  <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime" @loadedmetadata="setAudioVolume"></audio>
 </template>
 
 <script>
@@ -57,6 +58,7 @@ export default {
   watch: {
     selectedTrack(newIndex) {
       musicService.changeTrack(newIndex);
+      this.isPlaying = musicService.isPlaying; // Met à jour l'état de lecture
     },
   },
   methods: {
