@@ -6,8 +6,8 @@
         <!-- Section de gauche avec les liens centrés -->
         <div class="flex items-center space-x-8">
           <!-- Logo centré -->
-          <h1 class=" luckiest-guy-regular text-2xl font-bold animate-bounce">Rumble Memory</h1>
-          
+          <h1 class="luckiest-guy-regular text-2xl font-bold animate-bounce">Rumble Memory</h1>
+
           <!-- Liens centrés avec boutons -->
           <ul class="flex space-x-4">
             <li>
@@ -41,6 +41,13 @@
           </ul>
         </div>
 
+        <!-- Bouton pour ouvrir la popup du lecteur de musique -->
+        <div class="flex items-center space-x-4">
+          <button @click="showPopup = true" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+            🎵 Music Player
+          </button>
+        </div>
+
         <!-- Section à droite avec Connexion et Inscription -->
         <div class="flex items-center space-x-4">
           <router-link to="/login">
@@ -57,20 +64,66 @@
       </nav>
     </header>
 
-    <!-- Main Content -->
+    <!-- Popup / Modale pour le MusicPlayer -->
+    <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg relative">
+        <!-- Affichage uniquement de l'interface utilisateur du MusicPlayer -->
+        <MusicPlayer 
+        :showControls="true"
+        :isPlaying="isPlaying"
+        :volume="volume"
+        :selectedTrack="selectedTrack"
+        />
+        <!-- Bouton pour fermer la popup -->
+        <button @click="showPopup = false" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full">
+          ✖️
+        </button>
+      </div>
+    </div>
+    
+    <!--main-->
     <main class="container mx-auto py-6">
-      <router-view></router-view> <!-- This is where the components will be rendered -->
+      <router-view></router-view> 
     </main>
   </div>
 </template>
 
 <script>
-export default {
+import MusicPlayer from "@/components/MusicPlayer.vue"; // Assurez-vous que le chemin est correct
 
+export default {
   name: 'App',
+  components: {
+    MusicPlayer, // Enregistrer le composant MusicPlayer
+  },
+  data() {
+  return {
+    showPopup: false,
+    isPlaying: false,
+    volume: 50,
+    selectedTrack: 0,
+  };
+},
+methods: {
+  togglePlayPause() {
+    this.isPlaying = !this.isPlaying;
+    if (this.isPlaying) {
+      musicService.play();
+    } else {
+      musicService.pause();
+    }
+  },
+  changeTrack(index) {
+    this.selectedTrack = index;
+    musicService.changeTrack(index);
+  },
+  adjustVolume(value) {
+    this.volume = value;
+    musicService.setVolume(value);
+  },
+},
 };
 </script>
-
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
@@ -80,7 +133,6 @@ export default {
   font-weight: 400;
   font-style: normal;
 }
-
 
 /* Animation de rebond */
 @keyframes bounce {

@@ -1,9 +1,7 @@
 <template>
-  <div class="music-player fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white p-4 rounded-lg shadow-lg">
-    
-
+  <div v-if="showControls">
     <!-- Informations sur la piste actuelle -->
-    <div class="current-track mb-4">
+    <div class="current-track mb-4" v-if="currentTrack">
       <p class="font-semibold">{{ currentTrack.title }}</p>
       <p class="text-sm text-gray-400">{{ currentTrack.artist }}</p>
     </div>
@@ -27,83 +25,53 @@
         </option>
       </select>
     </div>
-
-    <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime" @ended="nextTrack"></audio>
   </div>
+
+  <!-- Audio (toujours monté, même si les contrôles sont cachés) -->
+  <audio ref="audio" :src="currentTrack ? currentTrack.url : ''" @timeupdate="updateTime" @ended="nextTrack"></audio>
 </template>
 
 <script>
+import { musicService } from "@/musicService"; // Assurez-vous que le chemin est correct
+
 export default {
+  props: {
+    showControls: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
-      isPlaying: false, // Indique si la musique est en cours de lecture
-      volume: 50, // Volume de la musique
-      selectedTrack: 0, // Piste actuellement sélectionnée
-      currentTime: 0, // Temps actuel de la piste
-      tracks: [
-        {
-          title: "A Look At You",
-          artist: "Mister Boo",
-          url: "src/assets/music/A look at you.mp3", // Chemin vers la piste 1
-        },
-        {
-          title: "Just Me",
-          artist: "Mister Boo",
-          url: "src/assets/music/Just Me.mp3", // Chemin vers la piste 2
-        },
-        {
-          title: "Spoon",
-          artist: "Mister Boo",
-          url: "src/assets/music/Spoon.mp3", // Chemin vers la piste 3
-        },
-      ],
+      isPlaying: musicService.isPlaying,
+      volume: musicService.volume * 100,
+      selectedTrack: musicService.currentTrackIndex,
+      tracks: musicService.tracks,
     };
   },
   computed: {
     currentTrack() {
-      return this.tracks[this.selectedTrack]; // Retourne la piste actuelle
+      return this.tracks[this.selectedTrack] || { title: '', artist: '', url: '' }; // Valeur par défaut
+    },
+  },
+  watch: {
+    selectedTrack(newIndex) {
+      musicService.changeTrack(newIndex);
     },
   },
   methods: {
     togglePlayPause() {
-      const audio = this.$refs.audio;
-      if (this.isPlaying) {
-        audio.pause();
-      } else {
-        audio.play();
-      }
-      this.isPlaying = !this.isPlaying;
+      musicService.togglePlayPause();
+      this.isPlaying = musicService.isPlaying;
     },
     adjustVolume() {
-      const audio = this.$refs.audio;
-      audio.volume = this.volume / 100;
+      musicService.setVolume(this.volume);
     },
-    changeTrack() {
-      const audio = this.$refs.audio;
-      audio.src = this.currentTrack.url;
-      this.isPlaying = false;
-      audio.play();
-      this.isPlaying = true;
-    },
-    updateTime() {
-      const audio = this.$refs.audio;
-      this.currentTime = audio.currentTime;
-    },
-    nextTrack() {
-      this.selectedTrack = (this.selectedTrack + 1) % this.tracks.length;
-      this.changeTrack();
-    },
+  },
+  mounted() {
+    if (musicService.isPlaying) {
+      musicService.play();
+    }
   },
 };
 </script>
-
-<style scoped>
-.music-player {
-  width: 100%;
-  max-width: 400px;
-}
-.volume-slider {
-  appearance: none;
-  width: 100px;
-}
-</style>

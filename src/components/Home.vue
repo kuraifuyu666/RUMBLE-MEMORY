@@ -26,11 +26,6 @@
         Envoyer
       </button>
     </div>
-    
-        <!-- Conteneur pour le MusicPlayer, positionné en bas -->
-    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-md">
-      <MusicPlayer />
-    </div>
 
     <!-- Affichage du Leaderboard à droite -->
     <div class="leaderboard-container fixed bottom-4 right-4 border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
@@ -40,11 +35,9 @@
 
 <script>
 import Leaderboard from '@/components/Leaderboard.vue';
-import MusicPlayer from '@/components/MusicPlayer.vue';
 export default {
   components: {
     Leaderboard, // Enregistrer le composant Leaderboard pour l'utiliser dans Home.vue
-    MusicPlayer, // Enregistrer le composant MusicPlayer pour l'utiliser dans Home.vue
   },
   name: 'Home',
   data() {
