@@ -48,18 +48,30 @@
           </button>
         </div>
 
-        <!-- Section à droite avec Connexion et Inscription -->
+        <!-- Section à droite avec Connexion, Profil, Déconnexion et Suppression de compte -->
         <div class="flex items-center space-x-4">
-          <router-link to="/login">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
-              Connexion
+          <template v-if="isAuthenticated">
+            <!-- Bouton Profil -->
+            <button @click="toggleProfile" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
+              Profil
             </button>
-          </router-link>
-          <router-link to="/signup">
-            <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-              Inscription
+            <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
+              Déconnexion
             </button>
-          </router-link>
+          </template>
+
+          <template v-else>
+            <router-link to="/login">
+              <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
+                Connexion
+              </button>
+            </router-link>
+            <router-link to="/signup">
+              <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
+                Inscription
+              </button>
+            </router-link>
+          </template>
         </div>
       </nav>
     </header>
@@ -69,10 +81,10 @@
       <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg relative">
         <!-- Affichage uniquement de l'interface utilisateur du MusicPlayer -->
         <MusicPlayer 
-        :showControls="true"
-        :isPlaying="isPlaying"
-        :volume="volume"
-        :selectedTrack="selectedTrack"
+          :showControls="true"
+          :isPlaying="isPlaying"
+          :volume="volume"
+          :selectedTrack="selectedTrack"
         />
         <!-- Bouton pour fermer la popup -->
         <button @click="showPopup = false" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full">
@@ -83,45 +95,92 @@
     
     <!--main-->
     <main class="container mx-auto py-6">
-      <router-view></router-view> 
+      <router-view></router-view>
     </main>
+
+    <!-- Profil modale avec options déconnexion et suppression de compte -->
+    <div v-if="showProfile" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div class="bg-white p-4 rounded shadow-lg relative">
+        <h2 class="text-lg font-bold">Mon Profil</h2>
+        <p class="mt-2">{{ userEmail }}</p>
+        <button @click="deleteAccount" class="bg-red-700 text-white px-4 py-2 rounded mt-2">Supprimer le compte</button>
+        <button @click="toggleProfile" class="absolute top-2 right-2 bg-gray-500 text-white p-2 rounded-full">✖️</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import MusicPlayer from "@/components/MusicPlayer.vue"; // Assurez-vous que le chemin est correct
+import MusicPlayer from "@/components/MusicPlayer.vue";
+import { getAuth, signOut, deleteUser, onAuthStateChanged } from 'firebase/auth';
 
 export default {
   name: 'App',
   components: {
-    MusicPlayer, // Enregistrer le composant MusicPlayer
+    MusicPlayer,
   },
   data() {
-  return {
-    showPopup: false,
-    isPlaying: false,
-    volume: 50,
-    selectedTrack: 0,
-  };
-},
-methods: {
-  togglePlayPause() {
-    this.isPlaying = !this.isPlaying;
-    if (this.isPlaying) {
-      musicService.play();
-    } else {
-      musicService.pause();
-    }
+    return {
+      showPopup: false,
+      showProfile: false,
+      isPlaying: false,
+      volume: 50,
+      selectedTrack: 0,
+      isAuthenticated: false,
+      userEmail: '',
+    };
   },
-  changeTrack(index) {
-    this.selectedTrack = index;
-    musicService.changeTrack(index);
+  methods: {
+    togglePlayPause() {
+      this.isPlaying = !this.isPlaying;
+    },
+    changeTrack(index) {
+      this.selectedTrack = index;
+    },
+    adjustVolume(value) {
+      this.volume = value;
+    },
+    toggleProfile() {
+      this.showProfile = !this.showProfile;
+    },
+    async logout() {
+      const auth = getAuth();
+      try {
+        await signOut(auth);
+        this.isAuthenticated = false;
+        this.userEmail = '';
+        this.showProfile = false;
+      } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+      }
+    },
+    async deleteAccount() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          await deleteUser(user);
+          this.isAuthenticated = false;
+          this.userEmail = '';
+          this.showProfile = false;
+        } catch (error) {
+          console.error('Erreur lors de la suppression du compte:', error);
+        }
+      }
+    },
   },
-  adjustVolume(value) {
-    this.volume = value;
-    musicService.setVolume(value);
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.isAuthenticated = true;
+        this.userEmail = user.email;
+      } else {
+        this.isAuthenticated = false;
+        this.userEmail = '';
+      }
+    });
   },
-},
 };
 </script>
 
@@ -134,7 +193,6 @@ methods: {
   font-style: normal;
 }
 
-/* Animation de rebond */
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
     transform: translateY(0);

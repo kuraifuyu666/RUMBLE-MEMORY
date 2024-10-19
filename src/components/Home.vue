@@ -5,53 +5,76 @@
       Testez votre mémoire et amusez-vous à associer les cartes. 
       Cliquez sur une carte pour la retourner et essayez de trouver les paires!
     </p>
-  </div>
 
-    <!-- Section de Chat à gauche -->
-    <div class="chat-container fixed bottom-4 left-4 border border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
-      <h2 class="text-2xl font-bold mb-2 text-white">Chat</h2>
-      <div class="chat-box border border-gray-300 rounded-lg shadow-md p-4 max-h-60 overflow-y-auto">
-        <div v-for="(msg, index) in messages" :key="index" class="chat-message mb-2 text-gray-300">
-          <strong>User:</strong> {{ msg }}
-        </div>
+    <!-- Conteneur pour le pseudo et le chat -->
+    <div class="input-chat-container fixed bottom-4 left-4 w-full max-w-md">
+      <!-- Section de saisie du pseudo -->
+      <div class="pseudo-container border border-gray-600 bg-gray-800 rounded-lg p-4 mb-2 shadow-lg">
+        <input
+          v-model="pseudo"
+          type="text"
+          placeholder="Entrez votre pseudo..."
+          class="border border-gray-500 bg-gray-700 text-white rounded-lg p-2 w-full mb-2"
+        />
       </div>
-      <input
-        v-model="newMessage"
-        @keyup.enter="sendMessage"
-        type="text"
-        placeholder="Écrivez un message..."
-        class="border border-gray-500 bg-gray-700 text-white rounded-lg p-2 w-full"
-      />
-      <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded">
-        Envoyer
-      </button>
+
+      <!-- Section de Chat -->
+      <div class="chat-container border border-gray-600 bg-gray-800 rounded-lg p-4 shadow-lg">
+        <h2 class="text-2xl font-bold mb-2 text-white">Chat</h2>
+        <div class="chat-box border border-gray-300 rounded-lg shadow-md p-4 max-h-60 overflow-y-auto" ref="chatBox">
+          <div v-for="(msg, index) in messages" :key="index" class="chat-message mb-2 text-gray-300 text-left">
+            <strong>{{ msg.pseudo }}:</strong> {{ msg.content }}
+          </div>
+        </div>
+        <input
+          v-model="newMessage"
+          @keyup.enter="sendMessage"
+          type="text"
+          placeholder="Écrivez un message..."
+          class="border border-gray-500 bg-gray-700 text-white rounded-lg p-2 w-full"
+        />
+        <button @click="sendMessage" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded">
+          Envoyer
+        </button>
+      </div>
     </div>
 
     <!-- Affichage du Leaderboard à droite -->
     <div class="leaderboard-container fixed bottom-4 right-4 border-gray-600 bg-gray-800 rounded-lg p-4 w-full max-w-md shadow-lg">
       <Leaderboard />
     </div>
+  </div>
 </template>
 
 <script>
 import Leaderboard from '@/components/Leaderboard.vue';
+
 export default {
   components: {
-    Leaderboard, // Enregistrer le composant Leaderboard pour l'utiliser dans Home.vue
+    Leaderboard,
   },
   name: 'Home',
   data() {
     return {
       newMessage: '',
       messages: [],
+      pseudo: '', // Pseudo vide au départ
     };
   },
   methods: {
     sendMessage() {
-      if (this.newMessage.trim() !== '') {
-        this.messages.push(this.newMessage.trim());
+      if (this.newMessage.trim() !== '' && this.pseudo.trim() !== '') {
+        // Ajouter le message avec le pseudo utilisateur
+        this.messages.push({ pseudo: this.pseudo, content: this.newMessage.trim() });
         this.newMessage = ''; // Réinitialiser le champ de saisie
+        this.$nextTick(() => {
+          this.scrollToBottom(); // Faire défiler vers le bas après le rendu
+        });
       }
+    },
+    scrollToBottom() {
+      const chatBox = this.$refs.chatBox;
+      chatBox.scrollTop = chatBox.scrollHeight; // Faire défiler vers le bas
     },
   },
 };
@@ -60,6 +83,13 @@ export default {
 <style scoped>
 .home-container {
   background-color: #f9f9f9;
+}
+.input-chat-container {
+  display: flex;
+  flex-direction: column; /* Alignement vertical des conteneurs pseudo et chat */
+}
+.pseudo-container {
+  z-index: 10; /* S'assurer que la saisie du pseudo est au-dessus des autres éléments */
 }
 .chat-container {
   transition: border-color 0.2s;
@@ -72,5 +102,9 @@ export default {
 }
 .chat-message {
   padding: 2px 0;
+  text-align: left; /* Aligne les messages sur la gauche */
 }
 </style>
+
+
+

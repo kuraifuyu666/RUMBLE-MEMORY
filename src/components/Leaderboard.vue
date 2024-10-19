@@ -1,19 +1,23 @@
 <template>
-  <div class="bg-white shadow-md rounded p-6">
-    <h2 class="text-xl font-bold mb-4">Classement</h2>
-    <table class="min-w-full table-auto">
+  <div class="bg-gradient-to-r from-gray-800 via-gray-900 to-black shadow-lg rounded-lg p-4 text-white">
+    <h2 class="text-xl font-bold mb-2 text-yellow-400 uppercase tracking-widest">Classement</h2>
+    <table class="min-w-full table-auto border-separate border-spacing-1 text-sm">
       <thead>
-        <tr class="bg-gray-200">
-          <th class="py-2 px-4">N°</th>
-          <th class="py-2 px-4">Name</th>
-          <th class="py-2 px-4">Score</th>
+        <tr class="bg-gray-700">
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">N°</th>
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Pseudo</th>
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Score</th>
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Temps</th>
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Erreurs</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="player in topPlayers" :key="player.rank" class="hover:bg-gray-100">
-          <td class="py-2 px-4">{{ player.rank }}</td>
-          <td class="py-2 px-4">{{ player.name }}</td>
-          <td class="py-2 px-4">{{ player.score }}</td>
+        <tr v-for="(player, index) in topPlayers" :key="player.id" class="hover:bg-gray-700 bg-gray-800 transition-colors duration-200">
+          <td class="py-1 px-2">{{ index + 1 }}</td>
+          <td class="py-1 px-2">{{ player.pseudo }}</td>
+          <td class="py-1 px-2">{{ player.bestGame?.score ?? 'N/A' }}</td>
+          <td class="py-1 px-2">{{ player.bestGame?.time ?? 'N/A' }}</td>
+          <td class="py-1 px-2">{{ player.bestGame?.errors ?? 'N/A' }}</td>
         </tr>
       </tbody>
     </table>
@@ -26,10 +30,68 @@ export default {
   data() {
     return {
       topPlayers: [
-        { rank: 1, name: 'Player1', score: 2000 },
-        // ... autres joueurs
-      ],
+        {
+          id: 1,
+          pseudo: 'Joueur1',
+          bestGame: {
+            score: 2500,
+            time: '03:45',
+            errors: 2
+          }
+        },
+        {
+          id: 2,
+          pseudo: 'Joueur2',
+          bestGame: {
+            score: 2300,
+            time: '04:00',
+            errors: 3
+          }
+        },
+        {
+          id: 3,
+          pseudo: 'Joueur3',
+          bestGame: {
+            score: 1800,
+            time: '05:10',
+            errors: 5
+          }
+        }
+      ]
     };
-  },
+  }
 };
 </script>
+
+<style scoped>
+body {
+  font-family: 'Cinzel', serif;
+}
+
+h2 {
+  letter-spacing: 0.1em;
+}
+
+table th, table td {
+  border: 1px solid #b8860b;
+}
+
+table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table-auto {
+  font-size: 0.875rem; /* Taille de texte réduite pour compacité */
+}
+
+.table-auto th, .table-auto td {
+  padding: 0.25rem 0.5rem; /* Padding minimisé */
+}
+
+.table-auto th {
+  font-weight: bold;
+}
+</style>
+
+
+
