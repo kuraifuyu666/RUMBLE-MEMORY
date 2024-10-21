@@ -2,10 +2,9 @@
   <div class="game-container p-6 flex flex-col items-center bg-gray-900 text-white min-h-screen">
     <h2 class="text-3xl font-bold mb-4 text-gray-100">Jeu de Rumble Memory</h2>
 
-    <!-- Bouton Rejouer, visible seulement si le jeu est terminé -->
     <button 
-      v-if="gameOver" 
-      @click="initializeGame" 
+      v-if="gameStore.gameOver" 
+      @click="restartGame" 
       class="mt-4 bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 transition-all"
     >
       Rejouer
@@ -18,8 +17,8 @@
         </label>
         <select
           id="difficulty"
-          v-model="selectedDifficulty"
-          @change="initializeGame"
+          v-model="gameStore.selectedDifficulty"
+          @change="gameStore.initializeGame"
           class="bg-gray-700 text-gray-100 border border-gray-600 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-600 transition-all"
         >
           <option value="easy" class="bg-gray-800">Facile (4 paires)</option>
@@ -29,22 +28,22 @@
       </div>
 
       <div class="text-xl bg-gray-800 text-gray-100 p-3 rounded-lg shadow-lg">
-        <span>Score : {{ score }}</span>
+        <span>Score : {{ gameStore.score }}</span>
       </div>
       <div class="text-xl bg-gray-800 text-gray-100 p-3 rounded-lg shadow-lg">
-        <span>Erreurs : {{ errorCount }}</span>
+        <span>Erreurs : {{ gameStore.errorCount }}</span>
       </div>
       <div class="text-xl bg-gray-800 text-gray-100 p-3 rounded-lg shadow-lg">
-        <span>Temps : {{ timer }}s</span>
+        <span>Temps : {{ gameStore.timer }}s</span>
       </div>
     </div>
 
     <div class="cards-container grid grid-cols-4 gap-4 justify-center p-4 bg-gray-800 rounded-lg shadow-lg">
       <div
-        v-for="(card, index) in cards"
+        v-for="(card, index) in gameStore.cards"
         :key="index"
         class="card bg-gray-700 rounded-lg shadow-xl p-4 flex items-center justify-center cursor-pointer hover:bg-gray-600"
-        @click="flipCard(index)"
+        @click="gameStore.flipCard(index)"
       >
         <img v-if="!card.flipped" src="@/assets/card-back.jpg" alt="Card Back" class="w-full h-full object-cover rounded-lg">
         <img v-else :src="card.image" alt="card image" class="w-full h-full object-cover rounded-lg">
@@ -54,138 +53,39 @@
 </template>
 
 <script>
-import { useGameStore } from '@/stores/gameStore'; 
-import { useAuthStore } from '@/stores/useAuthStore'; 
-import tarot1 from '@/assets/tarot1.jpg';
-import tarot2 from '@/assets/tarot2.jpg';
-import tarot3 from '@/assets/tarot3.jpg';
-import tarot4 from '@/assets/tarot4.jpg';
-import tarot5 from '@/assets/tarot5.jpg';
-import tarot6 from '@/assets/tarot6.jpg';
-import tarot7 from '@/assets/tarot7.jpg';
-import tarot8 from '@/assets/tarot8.jpg';
+import { useGameStore } from '@/stores/useGameStore';
+import { onMounted, onBeforeUnmount } from 'vue';
 
 export default {
-  data() {
-    return {
-      errorCount: 0,
-      timer: 0,
-      timerStarted: false,
-      timerInterval: null,
-      selectedDifficulty: 'easy', // Défaut à 'easy'
-      cards: [],
-      flippedCards: [],
-      matchedPairs: [],
-      score: 0,
-      images: [tarot1, tarot2, tarot3, tarot4, tarot5, tarot6, tarot7, tarot8],
-      gameOver: false, 
-    };
-  },
+  setup() {
+    const gameStore = useGameStore();
 
-  mounted() {
-    this.initializeGame(); // Initialise le jeu à chaque fois que le composant est monté
-  },
+    onMounted(() => {
+      console.log('Initialisation du jeu...');
+      gameStore.initializeGame(); // Initialise le jeu à chaque fois que le composant est monté
+    });
 
-  methods: {
-    initializeGame() {
-      let numberOfPairs;
-      if (this.selectedDifficulty === 'easy') numberOfPairs = 4;
-      else if (this.selectedDifficulty === 'medium') numberOfPairs = 6;
-      else if (this.selectedDifficulty === 'hard') numberOfPairs = 8;
+    onBeforeUnmount(() => {
+      gameStore.clearTimer();
+    });
 
-      const selectedImages = this.images.slice(0, numberOfPairs);
-      this.cards = [...selectedImages, ...selectedImages].map(image => ({ image, flipped: false }));
-      this.shuffleCards();
-      this.flippedCards = [];
-      this.matchedPairs = [];
-      this.errorCount = 0; 
-      this.score = 0; // Réinitialise le score à 0
-      this.timer = 0;
-      this.timerStarted = false;
-      this.gameOver = false; // Réinitialise à false au début d'une nouvelle partie
-
-      // Réinitialise les statistiques du jeu dans le store
-      const gameStore = useGameStore();
-      gameStore.setGameStats(0, 0, 0); // Réinitialise le score, le compteur d'erreurs et le temps
-    },
-
-    startTimer() {
-      if (!this.timerStarted) {
-        this.timerStarted = true;
-        this.timerInterval = setInterval(() => {
-          this.timer += 1;
-        }, 1000);
-      }
-    },
-
-    shuffleCards() {
-      for (let i = this.cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
-      }
-    },
-
-    flipCard(index) {
-      // Vérifie si la carte est déjà retournée ou si le jeu est terminé
-      if (this.cards[index].flipped || this.gameOver) return;
-
-      // Démarre le chronomètre si c'est la première carte retournée
-      this.startTimer();
-
-      // Retourne la carte
-      this.cards[index].flipped = true;
-      this.flippedCards.push(index);
-
-      // Vérifie si deux cartes sont retournées
-      if (this.flippedCards.length === 2) {
-        this.checkMatch();
-      }
-    },
-
-    checkMatch() {
-      const [firstIndex, secondIndex] = this.flippedCards;
-      if (this.cards[firstIndex].image === this.cards[secondIndex].image) {
-        this.matchedPairs.push(this.cards[firstIndex].image); // Ajoute l'image à matchedPairs
-        this.score += 1; // Augmente le score
-        this.flippedCards = []; // Réinitialise flippedCards
-        this.checkGameOver(); // Vérifie si le jeu est terminé
-      } else {
-        // Si pas de match, retourne les cartes après un délai
-        setTimeout(() => {
-          this.cards[firstIndex].flipped = false;
-          this.cards[secondIndex].flipped = false;
-          this.errorCount += 1; // Augmente le compteur d'erreurs
-          this.flippedCards = []; // Réinitialise flippedCards
-        }, 1000);
-      }
-    },
-
-    checkGameOver() {
-      if (this.matchedPairs.length === this.cards.length / 2) {
-        this.gameOver = true;
-        clearInterval(this.timerInterval); // Arrête le chronomètre
-
-        // Envoie les résultats au store
-        const gameStore = useGameStore();
-        gameStore.setGameStats(this.score, this.errorCount, this.timer);
+    const restartGame = () => {
+      if (gameStore.gameOver) {
+        console.log('Partie terminée.');
+        // Logique pour gérer les résultats localement ou afficher un message
+        const results = {
+          score: gameStore.score,
+          time: gameStore.timer,
+          errors: gameStore.errorCount,
+        };
+        console.log('Résultats de la partie :', results);
         
-        // Récupére l'ID utilisateur à partir du store d'authentification
-        const authStore = useAuthStore();
-        const userId = authStore.user?.uid; 
-
-        // Enregistre les résultats dans Firebase
-        if (userId) {
-          gameStore.userId = userId; // Défini l'ID utilisateur dans le store de jeu
-          gameStore.saveGameResults(); // Envoie les résultats à Firebase
-        } else {
-          console.error('User ID is not available.');
-        }
+        // Réinitialise le jeu
+        gameStore.initializeGame(); 
       }
-    },
-  },
+    };
 
-  beforeDestroy() {
-    clearInterval(this.timerInterval);
+    return { gameStore, restartGame };
   },
 };
 </script>
@@ -205,21 +105,5 @@ export default {
   background-color: #374151;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

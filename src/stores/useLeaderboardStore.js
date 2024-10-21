@@ -1,35 +1,21 @@
 import { defineStore } from 'pinia';
-import { db } from '@/fireBase'; 
-import { ref } from 'vue';
 
-export const useLeaderboardStore = defineStore('leaderboard', () => {
-  const topPlayers = ref([]);
-
-  // Fonction pour récupérer les données depuis Firestore en temps réel
-  const fetchTopPlayers = () => {
-    try {
-      // Utilise onSnapshot pour écouter les modifications en temps réel
-      db.collection('users').onSnapshot(snapshot => {
-        topPlayers.value = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            userId: data.userId,
-            bestGame: data.gameResults ? {
-              score: data.gameResults.score,
-              time: data.gameResults.time,
-              errors: data.gameResults.errors
-            } : null
-          };
-        });
-      });
-    } catch (error) {
-      console.error("Erreur lors de la récupération des joueurs:", error);
-    }
-  };
-
-  return {
-    topPlayers,
-    fetchTopPlayers
-  };
+export const useLeaderboardStore = defineStore('leaderboard', {
+  state: () => ({
+    topPlayers: [],
+  }),
+  actions: {
+    setTopPlayers(players) {
+      this.topPlayers = players;
+    },
+    fetchTopPlayers() {
+      // Remplace ceci par ta logique de récupération de données
+      const players = [
+        { userId: 'User1', bestGame: { score: 100, time: '10s', errors: 2 } },
+        { userId: 'User2', bestGame: { score: 90, time: '12s', errors: 3 } },
+        { userId: 'User3', bestGame: { score: 80, time: '15s', errors: 1 } },
+      ];
+      this.setTopPlayers(players);
+    },
+  },
 });
