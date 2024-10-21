@@ -64,9 +64,9 @@ export default {
   methods: {
     sendMessage() {
       if (this.newMessage.trim() !== '' && this.pseudo.trim() !== '') {
-        // Ajoute le message avec le pseudo utilisateur
+        // Ajouter le message avec le pseudo utilisateur
         this.messages.push({ pseudo: this.pseudo, content: this.newMessage.trim() });
-        this.newMessage = ''; // Réinitialise le champ de saisie
+        this.newMessage = ''; // Réinitialiser le champ de saisie
         this.$nextTick(() => {
           this.scrollToBottom(); // Faire défiler vers le bas après le rendu
         });
@@ -89,7 +89,7 @@ export default {
   flex-direction: column; /* Alignement vertical des conteneurs pseudo et chat */
 }
 .pseudo-container {
-  z-index: 10; 
+  z-index: 10; /* S'assurer que la saisie du pseudo est au-dessus des autres éléments */
 }
 .chat-container {
   transition: border-color 0.2s;
@@ -98,7 +98,7 @@ export default {
   border-color: #a1a1a1; /* Couleur de bordure au survol */
 }
 .chat-box {
-  max-height: 100px; /* Limite la hauteur de la boîte de chat */
+  max-height: 100px; /* Limiter la hauteur de la boîte de chat */
 }
 .chat-message {
   padding: 2px 0;

@@ -1,70 +1,48 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-900">
-    <div class="auth-form bg-gradient-to-r from-gray-800 via-gray-900 to-black shadow-lg rounded-lg p-8 text-white w-full max-w-md">
-      <h2 class="text-3xl font-bold mb-4 text-yellow-400 uppercase tracking-widest" v-if="isSignUpMode">Sign Up</h2>
-      <h2 class="text-3xl font-bold mb-4 text-yellow-400 uppercase tracking-widest" v-else>Log In</h2>
+  <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-4">{{ formTitle }}</h2>
+    
+    <!-- Formulaire de connexion ou inscription -->
+    <form @submit.prevent="submitForm" v-if="!isAuthenticated">
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">E-mail</label>
+        <input v-model="email" type="email" class="w-full p-2 border border-gray-300 rounded" required />
+      </div>
+      <div class="mb-4" v-if="isSignUp">
+        <label class="block text-sm font-bold mb-2">Pseudo</label>
+        <input v-model="pseudo" type="text" class="w-full p-2 border border-gray-300 rounded" required />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Mot de passe</label>
+        <input v-model="password" type="password" class="w-full p-2 border border-gray-300 rounded" required />
+      </div>
+      <button class="w-full bg-blue-500 text-white p-2 rounded">{{ submitText }}</button>
+    </form>
 
-      <form @submit.prevent="isSignUpMode ? signUp() : signIn()">
-        <div class="form-group mb-4">
-          <label for="email" class="block text-white text-sm font-bold mb-2">Email:</label>
-          <input
-            v-model="email"
-            type="email"
-            id="email"
-            v-if="isSignUpMode"
-            class="w-full p-3 text-gray-900 rounded-lg shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-            placeholder="Enter your email"
-            required
-          />
-          <input
-            v-model="email"
-            type="text"
-            id="email"
-            v-else
-            class="w-full p-3 text-gray-900 rounded-lg shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-            placeholder="User ID"
-            required
-          />
-        </div>
-
-        <div v-if="isSignUpMode" class="form-group mb-4">
-          <label for="userId" class="block text-white text-sm font-bold mb-2">User ID:</label>
-          <input
-            v-model="userId"
-            type="text"
-            id="userId"
-            class="w-full p-3 text-gray-900 rounded-lg shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-            placeholder="Create a User ID"
-            required
-          />
-        </div>
-
-        <div class="form-group mb-6">
-          <label for="password" class="block text-white text-sm font-bold mb-2">Password:</label>
-          <input
-            v-model="password"
-            type="password"
-            id="password"
-            class="w-full p-3 text-gray-900 rounded-lg shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="w-full bg-yellow-400 text-gray-800 py-2 px-4 rounded-full hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-        >
-          {{ isSignUpMode ? 'Sign Up' : 'Log In' }}
-        </button>
-
-        <p v-if="authStore.errorMessage" class="error-message text-red-500 mt-4">{{ authStore.errorMessage }}</p>
-      </form>
-
-      <p @click="toggleMode" class="toggle-mode text-white text-sm mt-4 cursor-pointer hover:underline">
-        {{ isSignUpMode ? 'Vous avez un compte? Log In' : "Vous n'avez pas de compte? Sign Up" }}
-      </p>
+    <!-- Afficher le bouton Profil si l'utilisateur est connecté -->
+    <div v-if="isAuthenticated" class="mt-4">
+      <button @click="toggleProfile" class="w-full bg-green-500 text-white p-2 rounded">Profil</button>
     </div>
+
+    <!-- Menu Profil : afficher le pseudo et inviter un ami -->
+    <div v-if="isAuthenticated && showProfile" class="mt-4 bg-gray-100 p-4 rounded shadow">
+      <h3 class="text-lg font-bold mb-2">Profil</h3>
+      <p><strong>Pseudo :</strong> {{ pseudo || 'Chargement...' }}</p> <!-- Afficher le pseudo ici -->
+
+      <!-- Section pour inviter des amis -->
+      <h3 class="text-lg font-bold mt-4 mb-2">Inviter un ami</h3>
+      <input v-model="friendEmail" type="email" class="w-full p-2 border border-gray-300 rounded mb-2" placeholder="E-mail de l'ami" />
+      <button @click="inviteFriend" class="w-full bg-blue-500 text-white p-2 rounded">Inviter</button>
+      <div v-if="inviteMessage" class="mt-2 text-green-500">{{ inviteMessage }}</div>
+      <div v-if="inviteError" class="mt-2 text-red-500">{{ inviteError }}</div>
+
+      <button @click="logout" class="w-full bg-red-500 text-white p-2 rounded mt-4">Déconnexion</button>
+      <button @click="deleteAccount" class="w-full bg-red-700 text-white p-2 rounded mt-2">Supprimer le compte</button>
+    </div>
+
+    <!-- Message d'erreur ou de succès -->
+    <div v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</div>
+    <div v-if="successMessage" class="text-green-500 mt-2">{{ successMessage }}</div>
   </div>
 </template>
 
@@ -265,11 +243,7 @@ export default {
 </script>
 
 <style scoped>
-.error-message {
-  text-align: center;
-  color: red;
-  font-weight: 600; /* semi-bold */
-}
+/* Ajoute des styles ici si nécessaire */
 </style>
 
 

@@ -2,6 +2,14 @@
   <div class="game-container p-6 flex flex-col items-center bg-gray-900 text-white min-h-screen">
     <h2 class="text-3xl font-bold mb-4 text-gray-100">Jeu de Rumble Memory</h2>
 
+    <!-- Bouton pour mode invité -->
+    <div class="mb-4">
+      <label>
+        <input type="checkbox" v-model="isGuest" />
+        Jouer en mode invité
+      </label>
+    </div>
+
     <!-- Bouton Rejouer, visible seulement si le jeu est terminé -->
     <button 
       v-if="gameOver" 
@@ -54,8 +62,6 @@
 </template>
 
 <script>
-import { useGameStore } from '@/stores/gameStore'; 
-import { useAuthStore } from '@/stores/useAuthStore';
 import tarot1 from '@/assets/tarot1.jpg';
 import tarot2 from '@/assets/tarot2.jpg';
 import tarot3 from '@/assets/tarot3.jpg';
@@ -72,19 +78,15 @@ export default {
       timer: 0,
       timerStarted: false,
       timerInterval: null,
-      selectedDifficulty: 'easy', // Défaut à 'easy'
-      selectedDifficulty: 'easy', // Défaut à 'easy'
+      selectedDifficulty: 'easy',
       cards: [],
       flippedCards: [],
       matchedPairs: [],
       score: 0,
       images: [tarot1, tarot2, tarot3, tarot4, tarot5, tarot6, tarot7, tarot8],
+      isGuest: true, // Défini si l'utilisateur est en mode invité
       gameOver: false, // Nouvel état pour vérifier si le jeu est terminé
     };
-  },
-
-  mounted() {
-    this.initializeGame(); // Initialise le jeu à chaque fois que le composant est monté
   },
 
   methods: {
@@ -100,37 +102,10 @@ export default {
       this.flippedCards = [];
       this.matchedPairs = [];
       this.errorCount = 0; 
-      this.score = 0; // Réinitialiser le score à 0
-      this.score = 0; // Réinitialiser le score à 0
       this.timer = 0;
       this.timerStarted = false;
       this.gameOver = false; // Réinitialiser à false au début d'une nouvelle partie
-
-      // Réinitialiser les statistiques du jeu dans le store
-      const gameStore = useGameStore();
-      gameStore.setGameStats(0, 0, 0); // Réinitialiser le score, le compteur d'erreurs et le temps
-    },
-
-    startTimer() {
-      if (!this.timerStarted) {
-        this.timerStarted = true;
-        this.timerInterval = setInterval(() => {
-          this.timer += 1;
-        }, 1000);
-      }
-
-      // Réinitialiser les statistiques du jeu dans le store
-      const gameStore = useGameStore();
-      gameStore.setGameStats(0, 0, 0); // Réinitialiser le score, le compteur d'erreurs et le temps
-    },
-
-    startTimer() {
-      if (!this.timerStarted) {
-        this.timerStarted = true;
-        this.timerInterval = setInterval(() => {
-          this.timer += 1;
-        }, 1000);
-      }
+      clearInterval(this.timerInterval);
     },
 
     shuffleCards() {
@@ -141,69 +116,46 @@ export default {
     },
 
     flipCard(index) {
-      // Vérifie si la carte est déjà retournée ou si le jeu est terminé
-      if (this.cards[index].flipped || this.gameOver) return;
+      const card = this.cards[index];
+      if (!this.timerStarted) this.startTimer();
+      if (card.flipped || this.flippedCards.length === 2) return;
 
-      // Démarre le chronomètre si c'est la première carte retournée
-      this.startTimer();
-
-      // Retourne la carte
-      this.cards[index].flipped = true;
+      card.flipped = true;
       this.flippedCards.push(index);
-
-      // Vérifie si deux cartes sont retournées
-
-      // Vérifie si deux cartes sont retournées
       if (this.flippedCards.length === 2) {
-        this.checkMatch();
-        this.checkMatch();
+        setTimeout(this.checkMatch, 1000);
       }
     },
 
     checkMatch() {
       const [firstIndex, secondIndex] = this.flippedCards;
-      if (this.cards[firstIndex].image === this.cards[secondIndex].image) {
-        this.matchedPairs.push(this.cards[firstIndex].image); // Ajoute l'image à matchedPairs
-        this.score += 1; // Augmente le score
-        this.flippedCards = []; // Réinitialise flippedCards
-        this.checkGameOver(); // Vérifie si le jeu est terminé
-      if (this.cards[firstIndex].image === this.cards[secondIndex].image) {
-        this.matchedPairs.push(this.cards[firstIndex].image); // Ajoute l'image à matchedPairs
-        this.score += 1; // Augmente le score
-        this.flippedCards = []; // Réinitialise flippedCards
-        this.checkGameOver(); // Vérifie si le jeu est terminé
+      const firstCard = this.cards[firstIndex];
+      const secondCard = this.cards[secondIndex];
+
+      if (firstCard.image === secondCard.image) {
+        this.matchedPairs.push(firstCard.image);
+        this.score += 100;
+        if (this.matchedPairs.length === this.cards.length / 2) {
+          this.stopTimer();
+          this.gameOver = true; // Indique que le jeu est terminé
+        }
       } else {
-        // Si pas de match, retourne les cartes après un délai
-        setTimeout(() => {
-          this.cards[firstIndex].flipped = false;
-          this.cards[secondIndex].flipped = false;
-          this.errorCount += 1; // Augmente le compteur d'erreurs
-          this.flippedCards = []; // Réinitialise flippedCards
-        }, 1000);
+        this.errorCount++;
+        firstCard.flipped = false;
+        secondCard.flipped = false;
       }
+      this.flippedCards = [];
     },
 
-    checkGameOver() {
-      if (this.matchedPairs.length === this.cards.length / 2) {
-        this.gameOver = true;
-        clearInterval(this.timerInterval); // Arrête le chronomètre
+    startTimer() {
+      this.timerStarted = true;
+      this.timerInterval = setInterval(() => {
+        this.timer++;
+      }, 1000);
+    },
 
-        // Envoie les résultats au store
-        const gameStore = useGameStore();
-        gameStore.setGameStats(this.score, this.errorCount, this.timer);
-        
-        // Récupére l'ID utilisateur à partir du store d'authentification
-        const authStore = useAuthStore();
-        const userId = authStore.user?.uid;
-
-        // Enregistre les résultats dans Firebase
-        if (userId) {
-          gameStore.userId = userId; // Défini l'ID utilisateur dans le store de jeu
-          gameStore.saveGameResults(); // Envoie les résultats à Firebase
-        } else {
-          console.error('User ID is not available.');
-        }
-      }
+    stopTimer() {
+      clearInterval(this.timerInterval);
     },
   },
 
