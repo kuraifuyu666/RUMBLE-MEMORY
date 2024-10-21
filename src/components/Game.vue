@@ -73,6 +73,7 @@ export default {
       timerStarted: false,
       timerInterval: null,
       selectedDifficulty: 'easy', // Défaut à 'easy'
+      selectedDifficulty: 'easy', // Défaut à 'easy'
       cards: [],
       flippedCards: [],
       matchedPairs: [],
@@ -100,9 +101,23 @@ export default {
       this.matchedPairs = [];
       this.errorCount = 0; 
       this.score = 0; // Réinitialiser le score à 0
+      this.score = 0; // Réinitialiser le score à 0
       this.timer = 0;
       this.timerStarted = false;
       this.gameOver = false; // Réinitialiser à false au début d'une nouvelle partie
+
+      // Réinitialiser les statistiques du jeu dans le store
+      const gameStore = useGameStore();
+      gameStore.setGameStats(0, 0, 0); // Réinitialiser le score, le compteur d'erreurs et le temps
+    },
+
+    startTimer() {
+      if (!this.timerStarted) {
+        this.timerStarted = true;
+        this.timerInterval = setInterval(() => {
+          this.timer += 1;
+        }, 1000);
+      }
 
       // Réinitialiser les statistiques du jeu dans le store
       const gameStore = useGameStore();
@@ -137,13 +152,21 @@ export default {
       this.flippedCards.push(index);
 
       // Vérifie si deux cartes sont retournées
+
+      // Vérifie si deux cartes sont retournées
       if (this.flippedCards.length === 2) {
+        this.checkMatch();
         this.checkMatch();
       }
     },
 
     checkMatch() {
       const [firstIndex, secondIndex] = this.flippedCards;
+      if (this.cards[firstIndex].image === this.cards[secondIndex].image) {
+        this.matchedPairs.push(this.cards[firstIndex].image); // Ajoute l'image à matchedPairs
+        this.score += 1; // Augmente le score
+        this.flippedCards = []; // Réinitialise flippedCards
+        this.checkGameOver(); // Vérifie si le jeu est terminé
       if (this.cards[firstIndex].image === this.cards[secondIndex].image) {
         this.matchedPairs.push(this.cards[firstIndex].image); // Ajoute l'image à matchedPairs
         this.score += 1; // Augmente le score
@@ -205,6 +228,12 @@ export default {
   background-color: #374151;
 }
 </style>
+
+
+
+
+
+
 
 
 
