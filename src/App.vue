@@ -5,10 +5,8 @@
       <nav class="container mx-auto flex justify-between items-center">
         <!-- Section de gauche avec les liens centrés -->
         <div class="flex items-center space-x-8">
-          <!-- Logo centré -->
           <h1 class="luckiest-guy-regular text-2xl font-bold animate-bounce">Rumble Memory</h1>
 
-          <!-- Liens centrés avec boutons -->
           <ul class="flex space-x-4">
             <li>
               <router-link to="/">
@@ -41,17 +39,14 @@
           </ul>
         </div>
 
-        <!-- Bouton pour ouvrir la popup du lecteur de musique -->
         <div class="flex items-center space-x-4">
           <button @click="showPopup = true" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
             🎵 Music Player
           </button>
         </div>
 
-        <!-- Section à droite avec Connexion, Profil, Déconnexion et Suppression de compte -->
         <div class="flex items-center space-x-4">
           <template v-if="isAuthenticated">
-            <!-- Bouton Profil -->
             <button @click="toggleProfile" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
               Profil
             </button>
@@ -61,14 +56,9 @@
           </template>
 
           <template v-else>
-            <router-link to="/login">
-              <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
-                Connexion
-              </button>
-            </router-link>
             <router-link to="/signup">
               <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-                Inscription
+                Inscription/connexion
               </button>
             </router-link>
           </template>
@@ -76,33 +66,29 @@
       </nav>
     </header>
 
-    <!-- Popup / Modale pour le MusicPlayer -->
     <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg relative">
-        <!-- Affichage uniquement de l'interface utilisateur du MusicPlayer -->
         <MusicPlayer 
           :showControls="true"
           :isPlaying="isPlaying"
           :volume="volume"
           :selectedTrack="selectedTrack"
         />
-        <!-- Bouton pour fermer la popup -->
         <button @click="showPopup = false" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full">
           ✖️
         </button>
       </div>
     </div>
-    
-    <!--main-->
+
     <main class="container mx-auto py-6">
       <router-view></router-view>
     </main>
 
-    <!-- Profil modale avec options déconnexion et suppression de compte -->
     <div v-if="showProfile" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <div class="bg-white p-4 rounded shadow-lg relative">
         <h2 class="text-lg font-bold">Mon Profil</h2>
-        <p class="mt-2">{{ userEmail }}</p>
+        <p class="mt-2">User ID: {{ userId }}</p>
+        <p class="mt-2">Email: {{ userEmail }}</p>
         <button @click="deleteAccount" class="bg-red-700 text-white px-4 py-2 rounded mt-2">Supprimer le compte</button>
         <button @click="toggleProfile" class="absolute top-2 right-2 bg-gray-500 text-white p-2 rounded-full">✖️</button>
       </div>
@@ -113,6 +99,7 @@
 <script>
 import MusicPlayer from "@/components/MusicPlayer.vue";
 import { getAuth, signOut, deleteUser, onAuthStateChanged } from 'firebase/auth';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export default {
   name: 'App',
@@ -128,6 +115,7 @@ export default {
       selectedTrack: 0,
       isAuthenticated: false,
       userEmail: '',
+      userId: '',
     };
   },
   methods: {
@@ -149,6 +137,7 @@ export default {
         await signOut(auth);
         this.isAuthenticated = false;
         this.userEmail = '';
+        this.userId = '';
         this.showProfile = false;
       } catch (error) {
         console.error('Erreur lors de la déconnexion:', error);
@@ -162,6 +151,7 @@ export default {
           await deleteUser(user);
           this.isAuthenticated = false;
           this.userEmail = '';
+          this.userId = '';
           this.showProfile = false;
         } catch (error) {
           console.error('Erreur lors de la suppression du compte:', error);
@@ -170,14 +160,18 @@ export default {
     },
   },
   mounted() {
+    const authStore = useAuthStore();
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.isAuthenticated = true;
         this.userEmail = user.email;
+        this.userId = user.uid; // Récupération de userId ici
+        // Si tu as besoin d'autres informations à partir du store, tu peux les ajouter ici
       } else {
         this.isAuthenticated = false;
         this.userEmail = '';
+        this.userId = '';
       }
     });
   },
@@ -209,3 +203,5 @@ export default {
   animation: bounce 1s ease infinite;
 }
 </style>
+
+

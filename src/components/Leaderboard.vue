@@ -5,7 +5,7 @@
       <thead>
         <tr class="bg-gray-700">
           <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">N°</th>
-          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Pseudo</th>
+          <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">UserId</th> <!-- Changer Pseudo à UserId -->
           <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Score</th>
           <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Temps</th>
           <th class="py-1 px-2 border-b border-yellow-400 text-left text-yellow-400">Erreurs</th>
@@ -14,7 +14,7 @@
       <tbody>
         <tr v-for="(player, index) in topPlayers" :key="player.id" class="hover:bg-gray-700 bg-gray-800 transition-colors duration-200">
           <td class="py-1 px-2">{{ index + 1 }}</td>
-          <td class="py-1 px-2">{{ player.pseudo }}</td>
+          <td class="py-1 px-2">{{ player.userId }}</td> <!-- Changer Pseudo à UserId -->
           <td class="py-1 px-2">{{ player.bestGame?.score ?? 'N/A' }}</td>
           <td class="py-1 px-2">{{ player.bestGame?.time ?? 'N/A' }}</td>
           <td class="py-1 px-2">{{ player.bestGame?.errors ?? 'N/A' }}</td>
@@ -25,39 +25,21 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+import { useLeaderboardStore } from '../stores/useLeaderboardStore';
+
 export default {
   name: 'Leaderboard',
-  data() {
+  setup() {
+    const leaderboardStore = useLeaderboardStore();
+
+    // Récupére les joueurs lors du montage du composant
+    onMounted(() => {
+      leaderboardStore.fetchTopPlayers();
+    });
+
     return {
-      topPlayers: [
-        {
-          id: 1,
-          pseudo: 'Joueur1',
-          bestGame: {
-            score: 2500,
-            time: '03:45',
-            errors: 2
-          }
-        },
-        {
-          id: 2,
-          pseudo: 'Joueur2',
-          bestGame: {
-            score: 2300,
-            time: '04:00',
-            errors: 3
-          }
-        },
-        {
-          id: 3,
-          pseudo: 'Joueur3',
-          bestGame: {
-            score: 1800,
-            time: '05:10',
-            errors: 5
-          }
-        }
-      ]
+      topPlayers: leaderboardStore.topPlayers
     };
   }
 };
@@ -85,13 +67,14 @@ table tbody tr {
 }
 
 .table-auto th, .table-auto td {
-  padding: 0.25rem 0.5rem; /* Padding minimisé */
+  padding: 0.25rem 0.5rem; 
 }
 
 .table-auto th {
   font-weight: bold;
 }
 </style>
+
 
 
 

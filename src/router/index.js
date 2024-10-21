@@ -4,6 +4,7 @@ import Game from '@/components/Game.vue';
 import Leaderboard from '@/components/Leaderboard.vue';
 import AuthForm from '@/components/AuthForm.vue';
 
+
 const routes = [
   { 
     path: '/', 

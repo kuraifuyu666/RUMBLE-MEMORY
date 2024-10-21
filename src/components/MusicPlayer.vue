@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { musicService } from "@/musicService"; // Assurez-vous que le chemin est correct
+import { musicService } from "@/musicService"; 
 
 export default {
   props: {
