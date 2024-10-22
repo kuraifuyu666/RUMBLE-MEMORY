@@ -6,7 +6,7 @@
       {{ leaderboardStore.difficulties[leaderboardStore.currentDifficultyIndex]?.charAt(0).toUpperCase() + leaderboardStore.difficulties[leaderboardStore.currentDifficultyIndex]?.slice(1) }}
     </h3>
 
-    <div class="overflow-y-auto max-h-60">
+    <div class="overflow-y-auto max-h-60"> <!--reglage taille pour evité débordement-->
       <table class="min-w-full table-auto border-separate border-spacing-1 text-sm">
         <thead>
           <tr class="bg-gray-700">

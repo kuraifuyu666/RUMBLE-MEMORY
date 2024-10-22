@@ -42,23 +42,11 @@
       <div
         v-for="(card, index) in gameStore.cards"
         :key="index"
-        class="card bg-gray-700 rounded-lg shadow-xl cursor-pointer"
-        :class="{ flipped: card.flipped }"
-        @click="() => gameStore.flipCard(index)"
+        class="card bg-gray-700 rounded-lg shadow-xl p-4 flex items-center justify-center cursor-pointer hover:bg-gray-600"
+        @click="gameStore.flipCard(index)"
       >
-        <div class="card-inner">
-          <img 
-            src="@/assets/card-back.jpg" 
-            alt="Card Back" 
-            class="card-back rounded-lg"
-          >
-          <img 
-            :src="card.image" 
-            alt="card image" 
-            class="card-front rounded-lg"
-            v-if="card.flipped"
-          >
-        </div>
+        <img v-if="!card.flipped" src="@/assets/card-back.jpg" alt="Card Back" class="w-full h-full object-cover rounded-lg">
+        <img v-else :src="card.image" alt="card image" class="w-full h-full object-cover rounded-lg">
       </div>
     </div>
   </div>
@@ -84,6 +72,7 @@ export default {
     const restartGame = () => {
       if (gameStore.gameOver) {
         console.log('Partie terminée.');
+        // Logique pour gérer les résultats localement ou afficher un message
         const results = {
           score: gameStore.score,
           time: gameStore.timer,
@@ -91,6 +80,7 @@ export default {
         };
         console.log('Résultats de la partie :', results);
         
+        // Réinitialise le jeu
         gameStore.initializeGame(); 
       }
     };
@@ -106,33 +96,9 @@ export default {
   background-color: #1f2937;
 }
 .card {
-  transition: transform 0.4s ease;
-  transform-style: preserve-3d;
+  transition: transform 0.2s, background-color 0.2s;
   width: 160px;
   height: 280px;
-  position: relative;
-  cursor: pointer;
-}
-.card.flipped {
-  transform: rotateY(180deg);
-}
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.4s ease;
-  transform-style: preserve-3d;
-}
-.card-back,
-.card-front {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-}
-
-.card-front {
-  transform: rotateY(180deg);
 }
 .card:hover {
   transform: scale(1.05);

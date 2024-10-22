@@ -62,21 +62,16 @@ export const useGameStore = defineStore('game', {
     },
 
     flipCard(index) {
-    // Empêche le retournement si la carte est déjà retournée ou si le jeu est terminé
-    if (this.cards[index].flipped || this.gameOver || this.matchedPairs.includes(this.cards[index].image)) return;
+      if (this.cards[index].flipped || this.gameOver) return;
 
-    this.startTimer();
-    this.cards[index].flipped = true;
-    this.flippedCards.push(index);
+      this.startTimer();
+      this.cards[index].flipped = true;
+      this.flippedCards.push(index);
 
-  // Délai pour vérifier les paires
-    if (this.flippedCards.length === 2) {
-      const firstIndex = this.flippedCards[0];
-      setTimeout(() => {
+      if (this.flippedCards.length === 2) {
         this.checkMatch();
-      }, 1000); // Délai de 1 seconde avant de vérifier la correspondance
-    }
-  },
+      }
+    },
 
     checkMatch() {
       const [firstIndex, secondIndex] = this.flippedCards;
