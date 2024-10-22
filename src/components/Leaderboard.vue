@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr v-for="(player, index) in leaderboardStore.currentDifficultyPlayers.slice(0, leaderboardStore.playersPerPage)" :key="player.userId" class="hover:bg-gray-700 bg-gray-800 transition-colors duration-200">
-            <td class="py-1 px-2">{{ (leaderboardStore.currentDifficultyIndex * leaderboardStore.playersPerPage) + index + 1 }}</td>
+            <td class="py-1 px-2">{{ index + 1 }}</td>
             <td class="py-1 px-1 text-sm truncate" style="max-width: 100px;">{{ player.userId }}</td>
             <td class="py-1 px-2">{{ player.score ?? 'N/A' }}</td>
             <td class="py-1 px-2">{{ player.timer ?? 'N/A' }}</td>
