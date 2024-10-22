@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
         const userData = userDoc.data();
 
         this.user = { userId: userData.userId, email: user.email }; // Met à jour l'état avec les infos nécessaires
-        this.errorMessage = null; // Réinitialiser l'erreur
+        this.errorMessage = null; // Réinitialise l'erreur
       } catch (error) {
         this.errorMessage = error.message;
       }

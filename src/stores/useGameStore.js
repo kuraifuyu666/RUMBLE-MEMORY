@@ -96,7 +96,7 @@ export const useGameStore = defineStore('game', {
         this.gameOver = true;
         clearInterval(this.timerInterval);
 
-        // Enregistrer les résultats dans Firestore
+        // Enregistre les résultats dans Firestore
         await this.saveGameResult();
       }
     },
