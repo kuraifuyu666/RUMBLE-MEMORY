@@ -1,10 +1,12 @@
 <template>
   <div v-if="showControls">
+    <!-- Informations sur la piste actuelle -->
     <div class="current-track mb-4" v-if="currentTrack">
       <p class="font-semibold">{{ currentTrack.title }}</p>
       <p class="text-sm text-gray-400">{{ currentTrack.artist }}</p>
     </div>
 
+    <!-- Contrôles de musique -->
     <div class="controls flex items-center space-x-4">
       <button @click="togglePlayPause" class="bg-gray-700 p-2 rounded-lg">
         <span v-if="isPlaying">⏸️ Pause</span>
@@ -14,22 +16,24 @@
       <span class="text-sm">Volume: {{ volume }}%</span>
     </div>
 
+    <!-- Sélection de piste -->
     <div class="track-selector mt-4">
-      <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
+    <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
       <select id="track-select" v-model="selectedTrack" @change="changeTrack" class="bg-gray-700 p-2 rounded-lg w-full">
-        <option v-for="(track, index) in tracks" :key="index" :value="index">
-          {{ track.title }} - {{ track.artist }}
-        </option>
+    <option v-for="(track, index) in tracks" :key="index" :value="index">
+      {{ track.title }} - {{ track.artist }} 
+      <span v-if="index === (selectedTrack + 1) % tracks.length"></span>
+    </option>
       </select>
     </div>
   </div>
 
-  <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime"></audio>
+  <!-- Audio (toujours monté, même si les contrôles sont cachés) -->
+  <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime" @loadedmetadata="setAudioVolume"></audio>
 </template>
 
 <script>
 import { musicService } from "@/musicService"; 
-import { ref, computed } from 'vue';
 
 export default {
   props: {
@@ -38,39 +42,38 @@ export default {
       default: true,
     },
   },
-  setup() {
-    const volume = ref(musicService.volume * 100);
-    const selectedTrack = ref(musicService.currentTrackIndex);
-    const isPlaying = ref(musicService.isPlaying);
-
-    const tracks = musicService.tracks;
-    const currentTrack = computed(() => tracks[selectedTrack.value] || { title: '', artist: '', url: '' });
-
-    function togglePlayPause() {
-      musicService.togglePlayPause();
-      isPlaying.value = musicService.isPlaying; // Mettre à jour l'état du bouton
-    }
-
-    function adjustVolume() {
-      musicService.setVolume(volume.value);
-    }
-
-    function changeTrack() {
-      musicService.changeTrack(selectedTrack.value);
-      isPlaying.value = musicService.isPlaying;
-    }
-
+  data() {
     return {
-      isPlaying,
-      volume,
-      selectedTrack,
-      tracks,
-      currentTrack,
-      togglePlayPause,
-      adjustVolume,
-      changeTrack,
+      isPlaying: musicService.isPlaying,
+      volume: musicService.volume * 100,
+      selectedTrack: musicService.currentTrackIndex,
+      tracks: musicService.tracks,
     };
-  }
+  },
+  computed: {
+    currentTrack() {
+      return this.tracks[this.selectedTrack] || { title: '', artist: '', url: '' }; // Valeur par défaut
+    },
+  },
+  watch: {
+    selectedTrack(newIndex) {
+      musicService.changeTrack(newIndex);
+      this.isPlaying = musicService.isPlaying; // Met à jour l'état de lecture
+    },
+  },
+  methods: {
+    togglePlayPause() {
+      musicService.togglePlayPause();
+      this.isPlaying = musicService.isPlaying;
+    },
+    adjustVolume() {
+      musicService.setVolume(this.volume);
+    },
+  },
+  mounted() {
+    if (musicService.isPlaying) {
+      musicService.play();
+    }
+  },
 };
 </script>
-
