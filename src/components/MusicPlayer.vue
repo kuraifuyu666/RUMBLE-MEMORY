@@ -1,12 +1,10 @@
 <template>
   <div v-if="showControls">
-    <!-- Informations sur la piste actuelle -->
     <div class="current-track mb-4" v-if="currentTrack">
       <p class="font-semibold">{{ currentTrack.title }}</p>
       <p class="text-sm text-gray-400">{{ currentTrack.artist }}</p>
     </div>
 
-    <!-- Contrôles de musique -->
     <div class="controls flex items-center space-x-4">
       <button @click="togglePlayPause" class="bg-gray-700 p-2 rounded-lg">
         <span v-if="isPlaying">⏸️ Pause</span>
@@ -16,20 +14,17 @@
       <span class="text-sm">Volume: {{ volume }}%</span>
     </div>
 
-    <!-- Sélection de piste -->
     <div class="track-selector mt-4">
-    <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
+      <label for="track-select" class="block mb-2">Sélectionnez une piste :</label>
       <select id="track-select" v-model="selectedTrack" @change="changeTrack" class="bg-gray-700 p-2 rounded-lg w-full">
-    <option v-for="(track, index) in tracks" :key="index" :value="index">
-      {{ track.title }} - {{ track.artist }} 
-      <span v-if="index === (selectedTrack + 1) % tracks.length"></span>
-    </option>
+        <option v-for="(track, index) in tracks" :key="index" :value="index">
+          {{ track.title }} - {{ track.artist }}
+        </option>
       </select>
     </div>
   </div>
 
-  <!-- Audio (toujours monté, même si les contrôles sont cachés) -->
-  <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime" @loadedmetadata="setAudioVolume"></audio>
+  <audio ref="audio" :src="currentTrack.url" @timeupdate="updateTime"></audio>
 </template>
 
 <script>
@@ -44,7 +39,6 @@ export default {
   },
   data() {
     return {
-      isPlaying: musicService.isPlaying,
       volume: musicService.volume * 100,
       selectedTrack: musicService.currentTrackIndex,
       tracks: musicService.tracks,
@@ -52,27 +46,29 @@ export default {
   },
   computed: {
     currentTrack() {
-      return this.tracks[this.selectedTrack] || { title: '', artist: '', url: '' }; // Valeur par défaut
+      return this.tracks[this.selectedTrack] || { title: '', artist: '', url: '' };
     },
+    isPlaying() {
+      return musicService.isPlaying;
+    }
   },
   watch: {
     selectedTrack(newIndex) {
       musicService.changeTrack(newIndex);
-      this.isPlaying = musicService.isPlaying; // Met à jour l'état de lecture
     },
   },
   methods: {
     togglePlayPause() {
       musicService.togglePlayPause();
-      this.isPlaying = musicService.isPlaying;
     },
     adjustVolume() {
       musicService.setVolume(this.volume);
     },
   },
   mounted() {
+    this.$refs.audio.volume = musicService.volume;
     if (musicService.isPlaying) {
-      musicService.play();
+      this.$refs.audio.play();
     }
   },
 };

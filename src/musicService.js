@@ -2,28 +2,29 @@ class MusicService {
   constructor() {
     this.audio = new Audio();
     this.isPlaying = false;
-    this.volume = 0.5; // Valeur par défaut
+    this.volume = 0.5;
     this.currentTrackIndex = 0;
     this.tracks = [
-      { title: "A Look At You", artist: "Mister Boo", url: "src/assets/music/A look at you.mp3" },
-      { title: "Just Me", artist: "Mister Boo", url: "src/assets/music/Just Me.mp3" },
-      { title: "Spoon", artist: "Mister Boo", url: "src/assets/music/Spoon.mp3" },
+      { title: "A Look At You", artist: "Mister Boo", url: "/music/A look at you.mp3" },
+      { title: "Just Me", artist: "Mister Boo", url: "/music/Just Me.mp3" },
+      { title: "Spoon", artist: "Mister Boo", url: "/music/Spoon.mp3" },
     ];
   }
 
-  play() {
+  async play() {
     if (!this.audio.src) {
       this.audio.src = this.tracks[this.currentTrackIndex].url;
     }
     this.audio.volume = this.volume;
-    this.audio.play();
-    this.isPlaying = true;
-
-    // Ajout d'un écouteur pour changer de piste à la fin
+    try {
+      await this.audio.play();
+      this.isPlaying = true;
+    } catch (error) {
+      console.error("Erreur lors de la lecture de l'audio:", error);
+    }
     this.audio.onended = () => {
       this.nextTrack();
-  };
-
+    };
   }
 
   pause() {
@@ -51,13 +52,8 @@ class MusicService {
   }
 
   nextTrack() {
-    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length; // Passe à la piste suivante
-    this.changeTrack(this.currentTrackIndex); // Change de piste
-    this.play(); // Joue la nouvelle piste
-  }
-  
-  setAudioVolume() {
-    this.adjustVolume(); // Définit le volume lors du chargement de la piste
+    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+    this.changeTrack(this.currentTrackIndex);
   }
 }
 
