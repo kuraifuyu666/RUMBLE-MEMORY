@@ -29,6 +29,7 @@
 
 <script>
 import { musicService } from "@/musicService"; 
+import { ref, onMounted, computed } from 'vue';
 
 export default {
   props: {
@@ -37,39 +38,45 @@ export default {
       default: true,
     },
   },
-  data() {
-    return {
-      volume: musicService.volume * 100,
-      selectedTrack: musicService.currentTrackIndex,
-      tracks: musicService.tracks,
-    };
-  },
-  computed: {
-    currentTrack() {
-      return this.tracks[this.selectedTrack] || { title: '', artist: '', url: '' };
-    },
-    isPlaying() {
-      return musicService.isPlaying;
-    }
-  },
-  watch: {
-    selectedTrack(newIndex) {
-      musicService.changeTrack(newIndex);
-    },
-  },
-  methods: {
-    togglePlayPause() {
+  setup() {
+    const volume = ref(musicService.volume * 100);
+    const selectedTrack = ref(musicService.currentTrackIndex);
+    const isPlaying = ref(musicService.isPlaying);
+
+    const tracks = musicService.tracks;
+    const currentTrack = computed(() => tracks[selectedTrack.value] || { title: '', artist: '', url: '' });
+
+    function togglePlayPause() {
       musicService.togglePlayPause();
-    },
-    adjustVolume() {
-      musicService.setVolume(this.volume);
-    },
-  },
-  mounted() {
-    this.$refs.audio.volume = musicService.volume;
-    if (musicService.isPlaying) {
-      this.$refs.audio.play();
+      isPlaying.value = musicService.isPlaying;
     }
-  },
+
+    function adjustVolume() {
+      musicService.setVolume(volume.value);
+    }
+
+    function changeTrack() {
+      musicService.changeTrack(selectedTrack.value);
+      isPlaying.value = musicService.isPlaying;
+    }
+
+    onMounted(() => {
+      if (musicService.isPlaying) {
+        musicService.play();
+      }
+    });
+
+    return {
+      isPlaying,
+      volume,
+      selectedTrack,
+      tracks,
+      currentTrack,
+      togglePlayPause,
+      adjustVolume,
+      changeTrack,
+    };
+  }
 };
 </script>
+

@@ -1,7 +1,9 @@
+import { ref } from 'vue';
+
 class MusicService {
   constructor() {
     this.audio = new Audio();
-    this.isPlaying = false;
+    this.isPlaying = ref(false);
     this.volume = 0.5;
     this.currentTrackIndex = 0;
     this.tracks = [
@@ -18,7 +20,7 @@ class MusicService {
     this.audio.volume = this.volume;
     try {
       await this.audio.play();
-      this.isPlaying = true;
+      this.isPlaying.value = true;
     } catch (error) {
       console.error("Erreur lors de la lecture de l'audio:", error);
     }
@@ -29,11 +31,11 @@ class MusicService {
 
   pause() {
     this.audio.pause();
-    this.isPlaying = false;
+    this.isPlaying.value = false;
   }
 
   togglePlayPause() {
-    if (this.isPlaying) {
+    if (this.isPlaying.value) {
       this.pause();
     } else {
       this.play();
@@ -58,3 +60,4 @@ class MusicService {
 }
 
 export const musicService = new MusicService();
+
