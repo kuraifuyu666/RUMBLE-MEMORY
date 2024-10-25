@@ -45,7 +45,8 @@ class MusicService {
   changeTrack(index) {
     this.currentTrackIndex = index;
     this.audio.src = this.tracks[this.currentTrackIndex].url;
-    this.play();
+    // Ne démarre pas la lecture automatiquement
+    this.isPlaying.value = false;
   }
 
   setVolume(value) {
@@ -56,8 +57,10 @@ class MusicService {
   nextTrack() {
     this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
     this.changeTrack(this.currentTrackIndex);
+    // Ne démarre pas automatiquement la nouvelle piste
   }
 }
 
 export const musicService = new MusicService();
+
 

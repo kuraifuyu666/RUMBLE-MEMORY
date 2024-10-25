@@ -29,7 +29,7 @@
 
 <script>
 import { musicService } from "@/musicService"; 
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed } from 'vue';
 
 export default {
   props: {
@@ -48,7 +48,7 @@ export default {
 
     function togglePlayPause() {
       musicService.togglePlayPause();
-      isPlaying.value = musicService.isPlaying;
+      isPlaying.value = musicService.isPlaying; // Mettre à jour l'état du bouton
     }
 
     function adjustVolume() {
@@ -59,12 +59,6 @@ export default {
       musicService.changeTrack(selectedTrack.value);
       isPlaying.value = musicService.isPlaying;
     }
-
-    onMounted(() => {
-      if (musicService.isPlaying) {
-        musicService.play();
-      }
-    });
 
     return {
       isPlaying,
