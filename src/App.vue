@@ -106,6 +106,11 @@
             </button>
           </a>
         </li>
+        <li>
+          <button @click="showPopup = true" click="toggleMenu" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+            🎵 Music Player
+          </button>
+        </li>
         <li v-if="isAuthenticated">
           <button @click="toggleProfile" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
             Profil
@@ -203,7 +208,6 @@ export default {
         this.userEmail = '';
         this.userId = '';
         this.showProfile = false;
-        this.menuOpen = false; // Fermer le menu burger à la déconnexion
         this.$router.push('/');
       } catch (error) {
         console.error('Erreur lors de la déconnexion:', error);
@@ -244,5 +248,6 @@ export default {
 <style scoped>
 /* Ajoutez ici des styles personnalisés si nécessaire */
 </style>
+
 
 
