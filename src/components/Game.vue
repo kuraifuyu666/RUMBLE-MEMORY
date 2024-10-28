@@ -10,8 +10,8 @@
       Rejouer
     </button>
 
-    <div class="flex items-center space-x-8 mb-4">
-      <div>
+    <div class="flex flex-col md:flex-row items-center space-x-0 md:space-x-8 mb-4">
+      <div class="mb-4 md:mb-0">
         <label for="difficulty" class="block text-lg font-medium text-gray-200 mb-2">
           Sélectionnez la difficulté :
         </label>
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="cards-container grid grid-cols-4 gap-4 justify-center p-4 bg-gray-800 rounded-lg shadow-lg">
+    <div class="cards-container grid grid-cols-4 gap-4 justify-items-center p-4 bg-gray-800 rounded-lg shadow-lg">
       <div
         v-for="(card, index) in gameStore.cards"
         :key="index"
@@ -62,7 +62,7 @@ export default {
 
     onMounted(() => {
       console.log('Initialisation du jeu...');
-      gameStore.initializeGame(); // Initialise le jeu à chaque fois que le composant est monté
+      gameStore.initializeGame();
     });
 
     onBeforeUnmount(() => {
@@ -71,16 +71,12 @@ export default {
 
     const restartGame = () => {
       if (gameStore.gameOver) {
-        console.log('Partie terminée.');
-        // Logique pour gérer les résultats localement ou afficher un message
         const results = {
           score: gameStore.score,
           time: gameStore.timer,
           errors: gameStore.errorCount,
         };
         console.log('Résultats de la partie :', results);
-        
-        // Réinitialise le jeu
         gameStore.initializeGame(); 
       }
     };
@@ -95,20 +91,23 @@ $background-color_1: #1f2937;
 $background-color_2: #374151;
 
 .game-container {
-	padding: 20px;
-	background-color: $background-color_1;
-}
-.card {
-	transition: transform 0.2s, background-color 0.2s;
-	width: 160px;
-	height: 280px;
-	&:hover {
-		transform: scale(1.05);
-		background-color: $background-color_2;
-	}
+  padding: 20px;
+  background-color: $background-color_1;
 }
 
+.card {
+  transition: transform 0.2s, background-color 0.2s;
+  width: 100px; /* Ajuste la taille pour mobile */
+  height: 160px; /* Ajuste la taille pour mobile */
+  &:hover {
+    transform: scale(1.05);
+    background-color: $background-color_2;
+  }
+}
 </style>
+
+
+
 
 
 

@@ -1,136 +1,81 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-100">
-    <!-- Navbar centrée -->
     <header class="bg-gray-800 text-white py-4">
       <nav class="container mx-auto flex justify-between items-center">
-        <!-- Titre -->
         <h1 class="luckiest-guy-regular text-2xl font-bold animate-bounce">Rumble Memory</h1>
 
-        <!-- Menu Burger pour mobile -->
-        <div class="md:hidden">
-          <button @click="toggleMenu" class="bg-gray-700 text-white p-2 rounded">
-            <!-- Icône du menu burger -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
-        </div>
+        <!-- Bouton Burger -->
+        <button @click="toggleMenu" class="block lg:hidden focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
 
-        <!-- Menu principal -->
-        <ul class="hidden md:flex space-x-4">
-          <li>
-            <router-link to="/">
-              <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
-                Accueil
-              </button>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/game">
-              <button class="bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 hover:shadow-lg transition-all">
-                Game
-              </button>
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/leaderboard">
-              <button class="bg-yellow-500 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 hover:shadow-lg transition-all">
-                Classement
-              </button>
-            </router-link>
-          </li>
-          <li>
-            <a href="https://youtu.be/dQw4w9WgXcQ?si=kFB5mui2EZx39Rpn" target="_blank" rel="noopener noreferrer">
-              <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
-                Help
-              </button>
-            </a>
-          </li>
-        </ul>
-
-        <div class="flex items-center space-x-4">
-          <button @click="showPopup = true" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
+        <div class="hidden lg:flex items-center space-x-4">
+          <router-link to="/">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition-all">
+              Accueil
+            </button>
+          </router-link>
+          <router-link to="/game">
+            <button class="bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 transition-all">
+              Game
+            </button>
+          </router-link>
+          <router-link to="/leaderboard">
+            <button class="bg-yellow-500 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 transition-all">
+              Classement
+            </button>
+          </router-link>
+          <a href="https://youtu.be/dQw4w9WgXcQ?si=kFB5mui2EZx39Rpn" target="_blank" rel="noopener noreferrer">
+            <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 transition-all">
+              Help
+            </button>
+          </a>
+          <button @click="togglePopup" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 transition-all">
             🎵 Music Player
           </button>
-        </div>
-
-        <div class="flex items-center space-x-4">
-          <template v-if="isAuthenticated">
-            <button @click="toggleProfile" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-              Profil
-            </button>
-            <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
-              Déconnexion
-            </button>
-          </template>
-
-          <template v-else>
-            <router-link to="/signup">
-              <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-                Inscription/connexion
-              </button>
-            </router-link>
-          </template>
+          <button v-if="!isAuthenticated" @click="goToLogin" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 transition-all">
+            Inscription/Connexion
+          </button>
+          <button v-if="isAuthenticated" @click="toggleProfile" class="bg-gray-600 text-white px-4 py-2 rounded shadow-md hover:bg-gray-700 transition-all">
+            Profil
+          </button>
+          <button v-if="isAuthenticated" @click="logout" class="bg-red-600 text-white px-4 py-2 rounded shadow-md hover:bg-red-700 transition-all">
+            Déconnexion
+          </button>
         </div>
       </nav>
     </header>
 
-    <!-- Menu Mobile -->
-    <div v-if="menuOpen" class="md:hidden fixed inset-0 bg-gray-800 bg-opacity-80 flex flex-col items-center justify-center z-50">
-      <ul class="space-y-4">
-        <li>
-          <router-link to="/" @click="toggleMenu">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 hover:shadow-lg transition-all">
-              Accueil
-            </button>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/game" @click="toggleMenu">
-            <button class="bg-purple-500 text-white px-4 py-2 rounded shadow-md hover:bg-purple-600 hover:shadow-lg transition-all">
-              Game
-            </button>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/leaderboard" @click="toggleMenu">
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded shadow-md hover:bg-yellow-600 hover:shadow-lg transition-all">
-              Classement
-            </button>
-          </router-link>
-        </li>
-        <li>
-          <a href="https://youtu.be/dQw4w9WgXcQ?si=kFB5mui2EZx39Rpn" target="_blank" rel="noopener noreferrer" @click="toggleMenu">
-            <button class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
-              Help
-            </button>
-          </a>
-        </li>
-        <li>
-          <button @click="showPopup = true" click="toggleMenu" class="bg-gray-500 text-white px-4 py-2 rounded shadow-md hover:bg-gray-600 hover:shadow-lg transition-all">
-            🎵 Music Player
-          </button>
-        </li>
-        <li v-if="isAuthenticated">
-          <button @click="toggleProfile" class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-            Profil
-          </button>
-        </li>
-        <li v-if="isAuthenticated">
-          <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded shadow-md hover:bg-red-600 hover:shadow-lg transition-all">
-            Déconnexion
-          </button>
-        </li>
-        <li v-else>
-          <router-link to="/signup" @click="toggleMenu">
-            <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 hover:shadow-lg transition-all">
-              Inscription/connexion
-            </button>
-          </router-link>
-        </li>
-      </ul>
+    <!-- Menu Burger -->
+    <div v-if="menuOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center lg:hidden">
+      <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg w-3/4 max-w-sm">
+        <button @click="toggleMenu" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full">✖️</button>
+        <router-link to="/" @click="toggleMenu">
+          <button class="bg-blue-500 text-white px-4 py-2 rounded w-full mt-2">Accueil</button>
+        </router-link>
+        <router-link to="/game" @click="toggleMenu">
+          <button class="bg-purple-500 text-white px-4 py-2 rounded w-full mt-2">Game</button>
+        </router-link>
+        <router-link to="/leaderboard" @click="toggleMenu">
+          <button class="bg-yellow-500 text-white px-4 py-2 rounded w-full mt-2">Classement</button>
+        </router-link>
+        <a href="https://youtu.be/dQw4w9WgXcQ?si=kFB5mui2EZx39Rpn" target="_blank" rel="noopener noreferrer" @click="toggleMenu">
+          <button class="bg-red-500 text-white px-4 py-2 rounded w-full mt-2">Help</button>
+        </a>
+        <button @click="togglePopup" class="bg-gray-500 text-white px-4 py-2 rounded w-full mt-2">🎵 Music Player</button>
+        <button v-if="!isAuthenticated" @click="goToLogin" class="bg-green-500 text-white px-4 py-2 rounded w-full mt-2">Inscription/Connexion</button>
+        <button v-if="isAuthenticated" @click="toggleProfile" class="bg-gray-600 text-white px-4 py-2 rounded w-full mt-2">Profil</button>
+        <button v-if="isAuthenticated" @click="logout" class="bg-red-600 text-white px-4 py-2 rounded w-full mt-2">Déconnexion</button>
+      </div>
     </div>
 
+    <main class="container mx-auto py-6">
+      <router-view></router-view>
+    </main>
+
+    <!-- code pour le popup et le profil -->
     <div v-if="showPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div class="bg-gray-900 text-white p-4 rounded-lg shadow-lg relative">
         <MusicPlayer 
@@ -144,10 +89,6 @@
         </button>
       </div>
     </div>
-
-    <main class="container mx-auto py-6">
-      <router-view></router-view>
-    </main>
 
     <div v-if="showProfile" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <div class="bg-white p-4 rounded shadow-lg relative">
@@ -175,7 +116,7 @@ export default {
     return {
       showPopup: false,
       showProfile: false,
-      menuOpen: false, // Ajout d'une propriété pour gérer l'état du menu
+      menuOpen: false, // État du menu burger
       isPlaying: false,
       volume: 50,
       selectedTrack: 0,
@@ -185,9 +126,6 @@ export default {
     };
   },
   methods: {
-    toggleMenu() {
-      this.menuOpen = !this.menuOpen; // Toggle pour le menu burger
-    },
     togglePlayPause() {
       this.isPlaying = !this.isPlaying;
     },
@@ -200,6 +138,13 @@ export default {
     toggleProfile() {
       this.showProfile = !this.showProfile;
     },
+    toggleMenu() {
+      this.menuOpen = !this.menuOpen; // Ouvrir ou fermer le menu
+    },
+    goToLogin() {
+      this.toggleMenu();
+      this.$router.push('/login'); // Rediriger vers la page de connexion
+    },
     async logout() {
       const auth = getAuth();
       try {
@@ -208,7 +153,7 @@ export default {
         this.userEmail = '';
         this.userId = '';
         this.showProfile = false;
-        this.$router.push('/');
+        this.menuOpen = false; // Fermer le menu à la déconnexion
       } catch (error) {
         console.error('Erreur lors de la déconnexion:', error);
       }
@@ -223,31 +168,45 @@ export default {
           this.userEmail = '';
           this.userId = '';
           this.showProfile = false;
-          this.$router.push('/');
         } catch (error) {
           console.error('Erreur lors de la suppression du compte:', error);
         }
       }
     },
+    togglePopup() {
+      this.showPopup = !this.showPopup; // Ouvrir ou fermer le popup
+    },
   },
   mounted() {
     const authStore = useAuthStore();
-    onAuthStateChanged(authStore.auth, (user) => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         this.isAuthenticated = true;
         this.userEmail = user.email;
         this.userId = user.uid;
       } else {
         this.isAuthenticated = false;
+        this.userEmail = '';
+        this.userId = '';
       }
     });
   },
 };
 </script>
 
-<style scoped>
-/* Ajoutez ici des styles personnalisés si nécessaire */
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+$font-family_1: "Luckiest Guy", cursive;
+
+.luckiest-guy-regular {
+	font-family: $font-family_1;
+	font-weight: 400;
+	font-style: normal;
+}
 </style>
+
 
 
 
