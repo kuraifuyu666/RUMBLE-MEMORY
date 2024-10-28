@@ -178,30 +178,31 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
-.luckiest-guy-regular {
-  font-family: "Luckiest Guy", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
+$font-family_1: "Luckiest Guy", cursive;
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+	0%,20%,50%,80%,100% {
+		transform: translateY(0);
+	}
+	40% {
+		transform: translateY(-10px);
+	}
+	60% {
+		transform: translateY(-5px);
+	}
+}
+.luckiest-guy-regular {
+	font-family: $font-family_1;
+	font-weight: 400;
+	font-style: normal;
+}
+.animate-bounce {
+	animation: bounce 1s ease infinite;
 }
 
-.animate-bounce {
-  animation: bounce 1s ease infinite;
-}
 </style>
 
 

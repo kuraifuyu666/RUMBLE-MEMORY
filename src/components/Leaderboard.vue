@@ -62,53 +62,55 @@ export default {
 };
 </script>
 
-<style scoped>
-body {
-  font-family: 'Cinzel', serif;
-}
-
-h2 {
-  letter-spacing: 0.1em;
-}
-
-table th, table td {
-  border: 1px solid #b8860b;
-}
-
-table tbody tr {
-  transition: all 0.2s ease;
-}
-
-.table-auto {
-  font-size: 0.875rem; 
-}
-
-.table-auto th, .table-auto td {
-  padding: 0.25rem 0.5rem; 
-}
-
-.table-auto th {
-  font-weight: bold;
-}
+<style scoped lang="scss">
+$font-family_1: 'Cinzel', serif;
+$background-color_1: #b8860b;
 
 /* Style pour le conteneur de défilement */
+body {
+	font-family: $font-family_1;
+}
+h2 {
+	letter-spacing: 0.1em;
+}
+table {
+	th {
+		border: 1px solid #b8860b;
+	}
+	td {
+		border: 1px solid #b8860b;
+	}
+	tbody {
+		tr {
+			transition: all 0.2s ease;
+		}
+	}
+}
+.table-auto {
+	font-size: 0.875rem;
+	th {
+		padding: 0.25rem 0.5rem;
+		font-weight: bold;
+	}
+	td {
+		padding: 0.25rem 0.5rem;
+	}
+}
 .overflow-y-auto {
-  overflow-y: auto;
-  scrollbar-width: thin; 
+	overflow-y: auto;
+	scrollbar-width: thin;
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: $background-color_1;
+		border-radius: 10px;
+	}
+	&::-webkit-scrollbar-track {
+		background: #333;
+	}
 }
 
-.overflow-y-auto::-webkit-scrollbar {
-  width: 8px; /* Largeur de la barre de défilement */
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: #b8860b; /* Couleur de la barre de défilement */
-  border-radius: 10px; /* Arrondi des bords de la barre de défilement */
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #333; /* Couleur de l'arrière-plan de la barre de défilement */
-}
 </style>
 
 

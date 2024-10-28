@@ -94,28 +94,32 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$background-color_1: #f9f9f9;
+$border-color_1: #a1a1a1;
+
 .home-container {
-  background-color: #f9f9f9;
+	background-color: $background-color_1;
 }
 .input-chat-container {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 .pseudo-container {
-  z-index: 10; 
+	z-index: 10;
 }
 .chat-container {
-  transition: border-color 0.2s;
-}
-.chat-container:hover {
-  border-color: #a1a1a1;
+	transition: border-color 0.2s;
+	&:hover {
+		border-color: $border-color_1;
+	}
 }
 .chat-box {
-  max-height: 100px;
+	max-height: 100px;
 }
 .chat-message {
-  padding: 2px 0;
-  text-align: left;
+	padding: 2px 0;
+	text-align: left;
 }
+
 </style>

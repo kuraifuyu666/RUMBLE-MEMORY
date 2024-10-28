@@ -90,20 +90,24 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$background-color_1: #1f2937;
+$background-color_2: #374151;
+
 .game-container {
-  padding: 20px;
-  background-color: #1f2937;
+	padding: 20px;
+	background-color: $background-color_1;
 }
 .card {
-  transition: transform 0.2s, background-color 0.2s;
-  width: 160px;
-  height: 280px;
+	transition: transform 0.2s, background-color 0.2s;
+	width: 160px;
+	height: 280px;
+	&:hover {
+		transform: scale(1.05);
+		background-color: $background-color_2;
+	}
 }
-.card:hover {
-  transform: scale(1.05);
-  background-color: #374151;
-}
+
 </style>
 
 

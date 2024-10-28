@@ -106,12 +106,15 @@ const toggleMode = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+$color_1: red;
+
 .error-message {
-  text-align: center;
-  color: red;
-  font-weight: 600; /* semi-bold */
+	text-align: center;
+	color: $color_1;
+	font-weight: 600;
 }
+
 </style>
 
 
